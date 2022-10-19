@@ -1,5 +1,7 @@
 FROM golang
 
+EXPOSE 3333
+
 WORKDIR /config_master
 
 COPY . .
