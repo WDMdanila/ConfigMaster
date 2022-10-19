@@ -19,6 +19,7 @@ func (configServer *ConfigServer) Shutdown() {
 }
 
 func (configServer *ConfigServer) ListenAndServe() {
+	log.Printf("Listening on %v\n", configServer.Addr)
 	err := configServer.Server.ListenAndServe()
 	if err == http.ErrServerClosed {
 		log.Printf("closed server gracefuly\n")
