@@ -6,4 +6,4 @@ COPY . .
 
 RUN make build
 
-CMD ["make", "run"]
+CMD ["bin/server/main"]
