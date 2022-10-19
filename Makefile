@@ -10,7 +10,7 @@ else
     BINARY_DEST = /usr/local/bin/config_master
 endif
 
-all: clean validate run
+all: clean validate build
 
 test:
 	go test -cover ./...
