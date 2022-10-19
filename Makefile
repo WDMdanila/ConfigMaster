@@ -15,7 +15,7 @@ vet:
 	go vet ./...
 
 build:
-	go build -o bin/server/main.exe cmd/server/main.go
+	go build -o bin/server/${BINARY_NAME} cmd/server/main.go
 
 clean:
 	${REMOVE_DIRECTORY_CMD} bin

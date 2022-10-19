@@ -1,4 +1,4 @@
-FROM 1.19.2-bullseye
+FROM golang
 
 WORKDIR /config_master
 
