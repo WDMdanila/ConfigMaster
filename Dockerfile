@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:1.19.2-bullseye
 
 EXPOSE 3333
 
@@ -6,6 +6,6 @@ WORKDIR /config_master
 
 COPY . .
 
-RUN make build
+RUN make build && make install
 
-CMD ["bin/server/main"]
+CMD ["config_master"]
