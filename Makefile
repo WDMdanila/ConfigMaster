@@ -1,7 +1,9 @@
 ifeq ($(OS),Windows_NT)
     REMOVE_DIRECTORY_CMD = rmdir /q /s
+    BINARY_NAME = "main.exe"
 else
     REMOVE_DIRECTORY_CMD = rm -rf
+    BINARY_NAME = "main"
 endif
 
 all: test vet build run
@@ -19,4 +21,4 @@ clean:
 	${REMOVE_DIRECTORY_CMD} bin
 
 run: build
-	bin/server/main.exe
+	bin/server/${BINARY_NAME}
