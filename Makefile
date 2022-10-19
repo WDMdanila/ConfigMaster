@@ -6,13 +6,15 @@ else
     BINARY_NAME = main
 endif
 
-all: test vet build run
+all: clean validate run
 
 test:
 	go test -cover ./...
 
 vet:
 	go vet ./...
+
+validate: test vet
 
 build:
 	go build -o bin/server/${BINARY_NAME} cmd/server/main.go
