@@ -2,14 +2,14 @@ BIN_DIR = bin
 
 ifeq ($(OS),Windows_NT)
     REMOVE_DIRECTORY_CMD = if exist ${BIN_DIR} rmdir /q /s ${BIN_DIR}
-    REMOVE_CMD = del
     BINARY_NAME = main.exe
     BINARY_DEST = c:/windows/system32/config_master
+    REMOVE_CMD = if exist ${BINARY_DEST} del ${BINARY_DEST}
 else
     REMOVE_DIRECTORY_CMD = rm -rf ${BIN_DIR} || true
-    REMOVE_CMD = rm
     BINARY_NAME = main
     BINARY_DEST = /usr/local/bin/config_master
+    REMOVE_CMD = rm ${BINARY_DEST} || true
 endif
 
 all: clean validate build
@@ -35,4 +35,4 @@ install:
 	cp bin/server/${BINARY_NAME} ${BINARY_DEST}
 
 uninstall:
-	${REMOVE_CMD} ${BINARY_DEST}
+	${REMOVE_CMD}
