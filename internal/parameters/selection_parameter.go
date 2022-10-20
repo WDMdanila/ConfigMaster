@@ -1,13 +1,13 @@
 package parameters
 
 import (
-	"encoding/json"
 	"math/rand"
+	"sync"
 )
 
 type SelectionParameter[T any] struct {
 	options []T
-	Value   T `json:"value"`
+	SimpleParameter[T]
 }
 
 type RandomSelectionParameter[T any] struct {
@@ -17,25 +17,20 @@ type RandomSelectionParameter[T any] struct {
 type SequentialSelectionParameter[T any] struct {
 	SelectionParameter[T]
 	index int
+	mutex sync.Mutex
 }
 
 func (parameter *RandomSelectionParameter[T]) ToJSON() []byte {
 	parameter.Value = parameter.options[rand.Intn(len(parameter.options))]
-	jsonBytes, err := json.Marshal(parameter)
-	if err != nil {
-		panic(err)
-	}
-	return jsonBytes
+	return parameter.SimpleParameter.ToJSON()
 }
 
 func (parameter *SequentialSelectionParameter[T]) ToJSON() []byte {
+	parameter.mutex.Lock()
+	defer parameter.mutex.Unlock()
 	parameter.Value = parameter.options[parameter.index]
 	parameter.updateIndex()
-	jsonBytes, err := json.Marshal(parameter)
-	if err != nil {
-		panic(err)
-	}
-	return jsonBytes
+	return parameter.SimpleParameter.ToJSON()
 }
 
 func (parameter *SequentialSelectionParameter[T]) updateIndex() {

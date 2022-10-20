@@ -1,26 +1,24 @@
 package parameters
 
-import (
-	"encoding/json"
-)
+import "sync"
 
 type ArithmeticSequenceParameter struct {
 	SimpleParameter[float64]
 	increment float64
+	mutex     sync.Mutex
 }
 
 type GeometricSequenceParameter struct {
 	SimpleParameter[float64]
 	multiplier float64
+	mutex      sync.Mutex
 }
 
 func (parameter *ArithmeticSequenceParameter) ToJSON() []byte {
-	jsonBytes, err := json.Marshal(parameter)
-	if err != nil {
-		panic(err)
-	}
-	parameter.Update()
-	return jsonBytes
+	parameter.mutex.Lock()
+	defer parameter.mutex.Unlock()
+	defer parameter.Update()
+	return parameter.SimpleParameter.ToJSON()
 }
 
 func (parameter *ArithmeticSequenceParameter) Update() {
@@ -32,12 +30,10 @@ func NewArithmeticSequenceParameter(value float64, increment float64) Parameter 
 }
 
 func (parameter *GeometricSequenceParameter) ToJSON() []byte {
-	jsonBytes, err := json.Marshal(parameter)
-	if err != nil {
-		panic(err)
-	}
-	parameter.Update()
-	return jsonBytes
+	parameter.mutex.Lock()
+	defer parameter.mutex.Unlock()
+	defer parameter.Update()
+	return parameter.SimpleParameter.ToJSON()
 }
 
 func (parameter *GeometricSequenceParameter) Update() {

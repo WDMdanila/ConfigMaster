@@ -1,7 +1,6 @@
 package parameters
 
 import (
-	"encoding/json"
 	"math/rand"
 )
 
@@ -13,11 +12,7 @@ type RandomParameter struct {
 
 func (parameter *RandomParameter) ToJSON() []byte {
 	parameter.Value = rand.Intn(parameter.max-parameter.min) + parameter.min
-	jsonBytes, err := json.Marshal(parameter)
-	if err != nil {
-		panic(err)
-	}
-	return jsonBytes
+	return parameter.SimpleParameter.ToJSON()
 }
 
 func NewRandomParameter(min int, max int) Parameter {

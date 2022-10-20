@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func extractConfigFileNameAndPass(fileName string) (string, string) {
+func extractConfigFileNameAndPath(fileName string) (string, string) {
 	fileName = strings.ReplaceAll(fileName, `\`, "/")
 	fileName = strings.ReplaceAll(fileName, "//", "/")
 	log.Printf("found config: %v\n", fileName)
@@ -25,7 +25,7 @@ func createConfigHandlers(configDirectory string) []server.RequestHandler {
 	var handlers []server.RequestHandler
 	for _, configFile := range utils.FindFilesWithExtInDirectory(configDirectory, "json") {
 		var configHttpPath string
-		configFile, configHttpPath = extractConfigFileNameAndPass(configFile)
+		configFile, configHttpPath = extractConfigFileNameAndPath(configFile)
 		paramReader := parameters.NewJSONParameterReader(configFile)
 		parametersMap := paramReader.Read()
 		for key, value := range parametersMap {

@@ -13,7 +13,7 @@ func FindFilesWithExtInDirectory(dirPath string, ext string) []string {
 		if err == nil && !info.IsDir() && filepath.Ext(info.Name()) == "."+ext {
 			files = append(files, path)
 		}
-		return nil
+		return err
 	})
 	if err != nil {
 		log.Panicf("could not read directory: %v, erorr: %v", dirPath, err)

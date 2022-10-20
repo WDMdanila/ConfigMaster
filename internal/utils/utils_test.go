@@ -13,6 +13,12 @@ func TestFindFilesWithExtInDirectory(t *testing.T) {
 	}
 }
 
+func TestFindFilesWithExtInNonExistentDirectory(t *testing.T) {
+	defer func() { _ = recover() }()
+	FindFilesWithExtInDirectory("./does_not_exist", "txt")
+	t.Fail()
+}
+
 func TestGetFilenameWithoutExt(t *testing.T) {
 	expected := "test"
 	filename := expected + ".tst"
