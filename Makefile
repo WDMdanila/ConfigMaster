@@ -12,6 +12,7 @@ else
     REMOVE_CMD = rm ${BINARY_DEST} || true
 endif
 
+.PHONY: all
 all: clean validate build
 
 test:
@@ -25,12 +26,14 @@ validate: test vet
 build:
 	go build -o bin/server/${BINARY_NAME} cmd/server/main.go
 
+.PHONY: clean
 clean:
 	${REMOVE_DIRECTORY_CMD}
 
 run: build
 	bin/server/${BINARY_NAME}
 
+.PHONY: install
 install:
 	cp bin/server/${BINARY_NAME} ${BINARY_DEST}
 
