@@ -9,7 +9,7 @@ import (
 )
 
 func TestTimestampHandler(t *testing.T) {
-	var expected = []byte(`{"value":1010}`)
+	expected := []byte(`{"value":1010}`)
 	req := httptest.NewRequest(http.MethodGet, "/timestamp?timestamp=1000", nil)
 	w := httptest.NewRecorder()
 	handler := NewTimestampHandler("/", 10)
@@ -26,7 +26,7 @@ func TestTimestampHandler(t *testing.T) {
 }
 
 func TestTimestampHandlerMultiple(t *testing.T) {
-	var expected = []byte(`{"value":1010}`)
+	expected := []byte(`{"value":1010}`)
 	req := httptest.NewRequest(http.MethodGet, "/timestamp?timestamp=1000", nil)
 	w := httptest.NewRecorder()
 	handler := NewTimestampHandler("/", 10)
@@ -49,7 +49,7 @@ func TestTimestampHandlerMultiple(t *testing.T) {
 }
 
 func TestTimestampHandlerShouldReturn500(t *testing.T) {
-	var expected = 500
+	expected := 500
 	req := httptest.NewRequest(http.MethodGet, "/timestamp", nil)
 	w := httptest.NewRecorder()
 	handler := NewTimestampHandler("/", 10)

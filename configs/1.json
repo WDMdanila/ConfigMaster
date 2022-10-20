@@ -8,7 +8,7 @@
     "value": true
   },
   "third_param": {
-    "type": "int",
+    "type": "number",
     "value": 3
   },
   "fourth_param": {
@@ -51,7 +51,7 @@
     }
   },
   "tenth_param": {
-    "type": "float",
+    "type": "number",
     "value": 3.1415926
   },
   "eleventh_param": {
@@ -66,7 +66,7 @@
     "type": "sequential selection",
     "values": [
       {
-        "one":1
+        "one": 1
       },
       2,
       3

@@ -14,7 +14,7 @@ func (configServer *ConfigServer) Shutdown() {
 	log.Printf("closing server gracefuly\n")
 	err := configServer.Server.Shutdown(context.Background())
 	if err != nil {
-		log.Fatalf("could not shutdown gracefuly, error: %v", err)
+		log.Panicf("could not shutdown gracefuly, error: %v", err)
 	}
 }
 
@@ -24,7 +24,7 @@ func (configServer *ConfigServer) ListenAndServe() {
 	if err == http.ErrServerClosed {
 		log.Printf("closed server gracefuly\n")
 	} else if err != nil {
-		log.Fatalf("could not start server, error: %v\n", err)
+		log.Panicf("could not start server, error: %v\n", err)
 	}
 }
 

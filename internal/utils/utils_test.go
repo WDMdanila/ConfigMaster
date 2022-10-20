@@ -5,16 +5,17 @@ import (
 )
 
 func TestFindFilesWithExtInDirectory(t *testing.T) {
+	expected := 2
 	modFile := FindFilesWithExtInDirectory("./", "txt")
 	modCount := len(modFile)
-	if modCount != 1 {
-		t.Fatalf("found multiple .txt files in directory: %v", modCount)
+	if modCount != expected {
+		t.Fatalf("found wrong number of .txt files in directory: %v, expected: %v", modCount, expected)
 	}
 }
 
 func TestGetFilenameWithoutExt(t *testing.T) {
-	var expected = "test"
-	var filename = expected + ".tst"
+	expected := "test"
+	filename := expected + ".tst"
 	res := GetFilenameWithoutExt(filename)
 	if res != expected {
 		t.Fatalf("filename without extension is wrong, expected: %v, got: %v", expected, res)

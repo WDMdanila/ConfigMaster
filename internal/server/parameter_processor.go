@@ -10,7 +10,7 @@ type ParameterProcessor struct {
 }
 
 func (handler *ParameterProcessor) Process(*http.Request) ([]byte, error) {
-	return handler.AsJSON(), nil
+	return handler.ToJSON(), nil
 }
 
 func NewParameterHandler(path string, parameter parameters.Parameter) RequestHandler {

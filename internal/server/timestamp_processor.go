@@ -20,14 +20,14 @@ func (handler *TimestampHandler) Process(request *http.Request) ([]byte, error) 
 	handler.mutex.Lock()
 	defer handler.mutex.Unlock()
 	if handler.Value != 0 {
-		return handler.AsJSON(), nil
+		return handler.ToJSON(), nil
 	}
 	parsedUint, err := parseRequest(request)
 	if err != nil {
 		return nil, err
 	}
 	handler.Value = parsedUint + handler.delay
-	return handler.AsJSON(), nil
+	return handler.ToJSON(), nil
 }
 
 func parseRequest(request *http.Request) (uint64, error) {

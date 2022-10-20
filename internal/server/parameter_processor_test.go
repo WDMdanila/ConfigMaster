@@ -10,7 +10,7 @@ import (
 )
 
 func TestParameterHandler(t *testing.T) {
-	var expected = []byte(`{"value":1}`)
+	expected := []byte(`{"value":1}`)
 	var parameter parameters.Parameter
 	parameter = &parameters.SimpleParameter[int]{Value: 1}
 	req := httptest.NewRequest(http.MethodGet, "/", nil)

@@ -8,8 +8,20 @@
     "value": true
   },
   "third_param": {
-    "type": "int",
+    "type": "number",
     "value": 3
+  },
+  "tenth_param": {
+    "type": "number",
+    "value": 3.1415926
+  },
+  "ninth_param": {
+    "type": "json",
+    "value": {
+      "field1": "value 1",
+      "field2": true,
+      "field3": 1
+    }
   },
   "fourth_param": {
     "type": "arithmetic sequence",
@@ -41,18 +53,6 @@
       "two",
       "three"
     ]
-  },
-  "ninth_param": {
-    "type": "json",
-    "value": {
-      "field1": "value 1",
-      "field2": true,
-      "field3": 1
-    }
-  },
-  "tenth_param": {
-    "type": "float",
-    "value": 3.1415926
   },
   "eleventh_param": {
     "type": "sequential selection",

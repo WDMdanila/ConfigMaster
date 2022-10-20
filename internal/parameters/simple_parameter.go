@@ -8,7 +8,7 @@ type SimpleParameter[T any] struct {
 	Value T `json:"value"`
 }
 
-func (parameter *SimpleParameter[T]) AsJSON() []byte {
+func (parameter *SimpleParameter[T]) ToJSON() []byte {
 	jsonBytes, err := json.Marshal(parameter)
 	if err != nil {
 		panic(err)
@@ -18,11 +18,20 @@ func (parameter *SimpleParameter[T]) AsJSON() []byte {
 
 type JSONParameter = SimpleParameter[interface{}]
 
-func NewJSONParameter(data []byte) Parameter {
-	var unpacked interface{}
-	err := json.Unmarshal(data, &unpacked)
-	if err != nil {
-		panic(err)
+func NewSimpleParameter[T any](data T) Parameter {
+	return &SimpleParameter[T]{data}
+}
+
+func NewJSONParameter(data interface{}) Parameter {
+	switch value := data.(type) {
+	case []byte:
+		var unpacked interface{}
+		err := json.Unmarshal(value, &unpacked)
+		if err != nil {
+			panic(err)
+		}
+		return &JSONParameter{unpacked}
+	default:
+		return &JSONParameter{data}
 	}
-	return &JSONParameter{unpacked}
 }

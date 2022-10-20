@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 )
 
-type Numbers interface {
-	int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | float32 | float64
+type ArithmeticSequenceParameter struct {
+	SimpleParameter[float64]
+	increment float64
 }
 
-type ArithmeticSequenceParameter[T Numbers] struct {
-	Value     T `json:"value"`
-	increment T
+type GeometricSequenceParameter struct {
+	SimpleParameter[float64]
+	multiplier float64
 }
 
-func (parameter *ArithmeticSequenceParameter[T]) AsJSON() []byte {
+func (parameter *ArithmeticSequenceParameter) ToJSON() []byte {
 	jsonBytes, err := json.Marshal(parameter)
 	if err != nil {
 		panic(err)
@@ -22,20 +23,15 @@ func (parameter *ArithmeticSequenceParameter[T]) AsJSON() []byte {
 	return jsonBytes
 }
 
-func (parameter *ArithmeticSequenceParameter[T]) Update() {
+func (parameter *ArithmeticSequenceParameter) Update() {
 	parameter.Value += parameter.increment
 }
 
-func NewArithmeticSequenceParameter[T Numbers](value T, increment T) Parameter {
-	return &ArithmeticSequenceParameter[T]{value, increment}
+func NewArithmeticSequenceParameter(value float64, increment float64) Parameter {
+	return &ArithmeticSequenceParameter{SimpleParameter: SimpleParameter[float64]{value}, increment: increment}
 }
 
-type GeometricSequenceParameter[T Numbers] struct {
-	Value      T `json:"value"`
-	multiplier T
-}
-
-func (parameter *GeometricSequenceParameter[T]) AsJSON() []byte {
+func (parameter *GeometricSequenceParameter) ToJSON() []byte {
 	jsonBytes, err := json.Marshal(parameter)
 	if err != nil {
 		panic(err)
@@ -44,10 +40,10 @@ func (parameter *GeometricSequenceParameter[T]) AsJSON() []byte {
 	return jsonBytes
 }
 
-func (parameter *GeometricSequenceParameter[T]) Update() {
+func (parameter *GeometricSequenceParameter) Update() {
 	parameter.Value *= parameter.multiplier
 }
 
-func NewGeometricSequenceParameter[T Numbers](value T, multiplier T) Parameter {
-	return &GeometricSequenceParameter[T]{value, multiplier}
+func NewGeometricSequenceParameter(value float64, multiplier float64) Parameter {
+	return &GeometricSequenceParameter{SimpleParameter: SimpleParameter[float64]{value}, multiplier: multiplier}
 }

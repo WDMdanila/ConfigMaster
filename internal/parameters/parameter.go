@@ -1,7 +1,7 @@
 package parameters
 
 type Parameter interface {
-	AsJSON() []byte
+	ToJSON() []byte
 }
 
 type SequenceParameter interface {

@@ -19,7 +19,7 @@ type SequentialSelectionParameter[T any] struct {
 	index int
 }
 
-func (parameter *RandomSelectionParameter[T]) AsJSON() []byte {
+func (parameter *RandomSelectionParameter[T]) ToJSON() []byte {
 	parameter.Value = parameter.options[rand.Intn(len(parameter.options))]
 	jsonBytes, err := json.Marshal(parameter)
 	if err != nil {
@@ -28,7 +28,7 @@ func (parameter *RandomSelectionParameter[T]) AsJSON() []byte {
 	return jsonBytes
 }
 
-func (parameter *SequentialSelectionParameter[T]) AsJSON() []byte {
+func (parameter *SequentialSelectionParameter[T]) ToJSON() []byte {
 	parameter.Value = parameter.options[parameter.index]
 	parameter.updateIndex()
 	jsonBytes, err := json.Marshal(parameter)

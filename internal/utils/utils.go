@@ -9,14 +9,14 @@ import (
 
 func FindFilesWithExtInDirectory(dirPath string, ext string) []string {
 	var files []string
-	directoryFiles, err := os.ReadDir(dirPath)
-	if err != nil {
-		log.Fatalf("could not read directory: %v, erorr: %v", dirPath, err)
-	}
-	for _, file := range directoryFiles {
-		if !file.IsDir() && filepath.Ext(file.Name()) == "."+ext {
-			files = append(files, file.Name())
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err == nil && !info.IsDir() && filepath.Ext(info.Name()) == "."+ext {
+			files = append(files, path)
 		}
+		return nil
+	})
+	if err != nil {
+		log.Panicf("could not read directory: %v, erorr: %v", dirPath, err)
 	}
 	return files
 }

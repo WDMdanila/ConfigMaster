@@ -9,19 +9,27 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"strconv"
+	"strings"
 )
+
+func extractConfigFileNameAndPass(fileName string) (string, string) {
+	fileName = strings.ReplaceAll(fileName, `\`, "/")
+	fileName = strings.ReplaceAll(fileName, "//", "/")
+	log.Printf("found config: %v\n", fileName)
+	folderNameIndex := strings.Index(fileName, "/")
+	return fileName, utils.GetFilenameWithoutExt(fileName[folderNameIndex+1:])
+}
 
 func createConfigHandlers(configDirectory string) []server.RequestHandler {
 	var handlers []server.RequestHandler
 	for _, configFile := range utils.FindFilesWithExtInDirectory(configDirectory, "json") {
-		configPath := filepath.Join(configDirectory, configFile)
-		log.Printf("found config: %v\n", configPath)
-		paramReader := parameters.NewJSONParameterReader(configPath)
+		var configHttpPath string
+		configFile, configHttpPath = extractConfigFileNameAndPass(configFile)
+		paramReader := parameters.NewJSONParameterReader(configFile)
 		parametersMap := paramReader.Read()
 		for key, value := range parametersMap {
-			handlerPath := fmt.Sprintf("/%v/%v", utils.GetFilenameWithoutExt(configFile), key)
+			handlerPath := fmt.Sprintf("/%v/%v", configHttpPath, key)
 			handlers = append(handlers, server.NewParameterHandler(handlerPath, value))
 		}
 	}

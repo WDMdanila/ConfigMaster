@@ -34,7 +34,7 @@ func parseJSONFile(filePath string) map[string]map[string]interface{} {
 	var data map[string]map[string]interface{}
 	err := json.Unmarshal(rawData, &data)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return data
 }
@@ -44,7 +44,7 @@ func readAllFromFile(filePath string) []byte {
 	defer closeFile(jsonFile)
 	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return byteValue
 }
@@ -52,7 +52,7 @@ func readAllFromFile(filePath string) []byte {
 func openFile(filePath string) *os.File {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return file
 }
@@ -75,22 +75,20 @@ func parseString(element map[string]interface{}, name string) string {
 	case string:
 		return elem
 	default:
-		err := fmt.Sprintf(`could not parse "%v", got type "%T"`, elem, elem)
-		panic(err)
+		panic(fmt.Errorf(`could not parse "%v", got type "%T"`, elem, elem))
 	}
 }
 
 func getParserFunc(elem string) func(map[string]interface{}) Parameter {
 	f, ok := parameterTypeParserMap[elem]
 	if !ok {
-		log.Fatalf(`"%v" parameter type is unknown\n`, elem)
+		panic(fmt.Errorf("\"%v\" parameter type is unknown\n", elem))
 	}
 	return f
 }
 
 var parameterTypeParserMap = map[string]func(map[string]interface{}) Parameter{
-	"int":                  ParseIntParameter,
-	"float":                ParseSimpleParameter[float64],
+	"number":               ParseSimpleParameter[float64],
 	"bool":                 ParseSimpleParameter[bool],
 	"string":               ParseSimpleParameter[string],
 	"json":                 ParseJSONParameter,
@@ -101,78 +99,49 @@ var parameterTypeParserMap = map[string]func(map[string]interface{}) Parameter{
 	"random selection":     ParseRandomSelectionParameter,
 }
 
-func ParseIntParameter(element map[string]interface{}) Parameter {
-	value := retrieveInt(element, "value")
-	return &SimpleParameter[int]{value}
-}
-
-func retrieveInt(element map[string]interface{}, name string) int {
-	var value int
+func retrieveFloat(element map[string]interface{}, name string) float64 {
 	switch elem := element[name].(type) {
-	case int:
-		value = elem
 	case float64:
-		verifyIntegral(elem)
-		value = int(elem)
+		return elem
 	default:
-		err := fmt.Sprintf(`could not parse "%v", got type "%T"`, elem, elem)
-		panic(err)
-	}
-	return value
-}
-
-func verifyIntegral(elem float64) {
-	if elem != float64(int(elem)) {
-		err := fmt.Sprintf(`tried to parse float value "%v" as int`, elem)
-		panic(err)
+		panic(fmt.Errorf(`could not parse "%v", got type "%T"`, elem, elem))
 	}
 }
 
 func ParseSimpleParameter[T any](element map[string]interface{}) Parameter {
 	switch elem := element["value"].(type) {
 	case T:
-		return &SimpleParameter[T]{elem}
+		return NewSimpleParameter(elem)
 	default:
-		err := fmt.Sprintf(`could not parse "%v", got type "%T"`, elem, elem)
-		panic(err)
+		panic(fmt.Errorf(`could not parse "%v", got type "%T"`, elem, elem))
 	}
 }
 
 func ParseJSONParameter(element map[string]interface{}) Parameter {
 	switch elem := element["value"].(type) {
 	case map[string]interface{}:
-		data := toBytes(elem)
-		return NewJSONParameter(data)
+		return NewJSONParameter(elem)
 	default:
-		err := fmt.Sprintf(`could not parse "%v", got type "%T"`, elem, elem)
-		panic(err)
+		panic(fmt.Errorf(`could not parse "%v", got type "%T"`, elem, elem))
 	}
-}
-
-func toBytes(elem map[string]interface{}) []byte {
-	data, err := json.Marshal(elem)
-	if err != nil {
-		log.Fatalf(`could not parse "%v", error: %v\n`, elem, err)
-	}
-	return data
 }
 
 func ParseRandomParameter(element map[string]interface{}) Parameter {
-	min := retrieveInt(element, "min")
-	max := retrieveInt(element, "max")
-	return &RandomParameter{min: min, max: max}
+	min := int(retrieveFloat(element, "min"))
+	max := int(retrieveFloat(element, "max"))
+	return NewRandomParameter(min, max)
 }
 
 func ParseArithmeticSequenceParameter(element map[string]interface{}) Parameter {
-	value := retrieveInt(element, "value")
-	increment := retrieveInt(element, "increment")
-	return &ArithmeticSequenceParameter[int]{value, increment}
+	value := retrieveFloat(element, "value")
+	increment := retrieveFloat(element, "increment")
+	return NewArithmeticSequenceParameter(value, increment)
 }
 
 func ParseGeometricSequenceParameter(element map[string]interface{}) Parameter {
-	value := retrieveInt(element, "value")
-	multiplier := retrieveInt(element, "multiplier")
-	return &GeometricSequenceParameter[int]{value, multiplier}
+	value := retrieveFloat(element, "value")
+	multiplier := retrieveFloat(element, "multiplier")
+	return NewGeometricSequenceParameter(value, multiplier)
 }
 
 func ParseSequentialSelectionParameter(element map[string]interface{}) Parameter {
@@ -185,8 +154,7 @@ func parseArray(element map[string]interface{}, name string) []interface{} {
 	case []interface{}:
 		return values
 	default:
-		errString := fmt.Sprintf(`expected array as "%v", got type: %T`, name, values)
-		panic(errString)
+		panic(fmt.Errorf(`expected array as "%v", got type: %T`, name, values))
 	}
 }
 

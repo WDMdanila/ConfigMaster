@@ -6,12 +6,12 @@ import (
 )
 
 type RandomParameter struct {
-	min   int
-	max   int
-	Value int `json:"value"`
+	SimpleParameter[int]
+	min int
+	max int
 }
 
-func (parameter *RandomParameter) AsJSON() []byte {
+func (parameter *RandomParameter) ToJSON() []byte {
 	parameter.Value = rand.Intn(parameter.max-parameter.min) + parameter.min
 	jsonBytes, err := json.Marshal(parameter)
 	if err != nil {

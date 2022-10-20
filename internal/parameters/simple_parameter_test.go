@@ -7,9 +7,9 @@ import (
 
 func TestSimpleParameterStringValueAsJSON(t *testing.T) {
 	var parameter Parameter
-	var expected = []byte(`{"value":"value"}`)
-	parameter = &SimpleParameter[string]{"value"}
-	res := parameter.AsJSON()
+	expected := []byte(`{"value":"value"}`)
+	parameter = NewSimpleParameter("value")
+	res := parameter.ToJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -17,9 +17,9 @@ func TestSimpleParameterStringValueAsJSON(t *testing.T) {
 
 func TestSimpleParameterIntValueAsJSON(t *testing.T) {
 	var parameter Parameter
-	var expected = []byte(`{"value":1}`)
-	parameter = &SimpleParameter[int]{1}
-	res := parameter.AsJSON()
+	expected := []byte(`{"value":1}`)
+	parameter = NewSimpleParameter(1)
+	res := parameter.ToJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -27,9 +27,9 @@ func TestSimpleParameterIntValueAsJSON(t *testing.T) {
 
 func TestSimpleParameterBoolValueAsJSON(t *testing.T) {
 	var parameter Parameter
-	var expected = []byte(`{"value":true}`)
-	parameter = &SimpleParameter[bool]{true}
-	res := parameter.AsJSON()
+	expected := []byte(`{"value":true}`)
+	parameter = NewSimpleParameter(true)
+	res := parameter.ToJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -37,9 +37,9 @@ func TestSimpleParameterBoolValueAsJSON(t *testing.T) {
 
 func TestSimpleParameterJsonValueAsJSON(t *testing.T) {
 	var parameter Parameter
-	var expected = []byte(`{"value":{"field1":"value 1","field2":true,"field3":1}}`)
+	expected := []byte(`{"value":{"field1":"value 1","field2":true,"field3":1}}`)
 	parameter = NewJSONParameter([]byte(`{"field1":"value 1","field2":true,"field3":1}`))
-	res := parameter.AsJSON()
+	res := parameter.ToJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -47,9 +47,9 @@ func TestSimpleParameterJsonValueAsJSON(t *testing.T) {
 
 func TestSimpleParameterFloatValueAsJSON(t *testing.T) {
 	var parameter Parameter
-	var expected = []byte(`{"value":3.141592653589793}`)
-	parameter = &SimpleParameter[float64]{3.141592653589793}
-	res := parameter.AsJSON()
+	expected := []byte(`{"value":3.141592653589793}`)
+	parameter = NewSimpleParameter(3.141592653589793)
+	res := parameter.ToJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
