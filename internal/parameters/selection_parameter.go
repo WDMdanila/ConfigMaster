@@ -6,8 +6,8 @@ import (
 )
 
 type SelectionParameter[T any] struct {
-	options []T
 	SimpleParameter[T]
+	options []T
 }
 
 type RandomSelectionParameter[T any] struct {
