@@ -1,17 +1,23 @@
 package parameters
 
 import (
+	"config_master/internal/utils"
 	"math/rand"
 	"sync"
 )
 
 type SelectionParameter[T any] struct {
-	SimpleParameter[T]
+	NamedParameter
 	options []T
 }
 
 type RandomSelectionParameter[T any] struct {
 	SelectionParameter[T]
+}
+
+func (parameter *RandomSelectionParameter[T]) Set(i interface{}) {
+	//TODO implement me
+	panic("implement me")
 }
 
 type SequentialSelectionParameter[T any] struct {
@@ -20,27 +26,30 @@ type SequentialSelectionParameter[T any] struct {
 	mutex sync.Mutex
 }
 
-func (parameter *RandomSelectionParameter[T]) ToJSON() []byte {
-	parameter.Value = parameter.options[rand.Intn(len(parameter.options))]
-	return parameter.SimpleParameter.ToJSON()
+func (parameter *SequentialSelectionParameter[T]) Set(i interface{}) {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (parameter *SequentialSelectionParameter[T]) ToJSON() []byte {
+func (parameter *RandomSelectionParameter[T]) GetAsJSON() []byte {
+	return utils.GetAsJSON(parameter.name, parameter.options[rand.Intn(len(parameter.options))])
+}
+
+func (parameter *SequentialSelectionParameter[T]) GetAsJSON() []byte {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
-	parameter.Value = parameter.options[parameter.index]
-	parameter.updateIndex()
-	return parameter.SimpleParameter.ToJSON()
+	defer parameter.updateIndex()
+	return utils.GetAsJSON(parameter.name, parameter.options[parameter.index])
 }
 
 func (parameter *SequentialSelectionParameter[T]) updateIndex() {
 	parameter.index = (parameter.index + 1) % len(parameter.options)
 }
 
-func NewRandomSelectionParameter[T any](options []T) Parameter {
-	return &RandomSelectionParameter[T]{SelectionParameter: SelectionParameter[T]{options: options}}
+func NewRandomSelectionParameter[T any](name string, options []T) Parameter {
+	return &RandomSelectionParameter[T]{SelectionParameter: SelectionParameter[T]{NamedParameter: NamedParameter{name: name}, options: options}}
 }
 
-func NewSequentialSelectionParameter[T any](options []T) Parameter {
-	return &SequentialSelectionParameter[T]{SelectionParameter: SelectionParameter[T]{options: options}}
+func NewSequentialSelectionParameter[T any](name string, options []T) Parameter {
+	return &SequentialSelectionParameter[T]{SelectionParameter: SelectionParameter[T]{NamedParameter: NamedParameter{name: name}, options: options}}
 }

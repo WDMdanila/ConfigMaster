@@ -1,5 +1,7 @@
 package parameters
 
 type Parameter interface {
-	ToJSON() []byte
+	Name() string
+	GetAsJSON() []byte
+	Set(interface{})
 }

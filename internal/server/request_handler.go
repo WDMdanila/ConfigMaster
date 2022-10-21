@@ -10,5 +10,5 @@ type RequestHandler interface {
 }
 
 type Processor interface {
-	Process(*http.Request) ([]byte, error)
+	Process(*http.Request) []byte
 }

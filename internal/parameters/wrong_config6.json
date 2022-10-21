@@ -1,0 +1,7 @@
+{
+  "sixth_param": {
+    "parameter_type": "random",
+    "min": "hello",
+    "max": 10
+  }
+}

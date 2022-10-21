@@ -9,13 +9,13 @@ import (
 func TestArithmeticSequenceParameterAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":0}`)
-	parameter = NewArithmeticSequenceParameter(0, 1)
-	res := parameter.ToJSON()
+	parameter = NewArithmeticSequenceParameter("value", 0, 1)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 	expected = []byte(`{"value":1}`)
-	res = parameter.ToJSON()
+	res = parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -24,13 +24,13 @@ func TestArithmeticSequenceParameterAsJSON(t *testing.T) {
 func TestArithmeticFloatSequenceParameterAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":0}`)
-	parameter = NewArithmeticSequenceParameter(0, 0.1)
-	res := parameter.ToJSON()
+	parameter = NewArithmeticSequenceParameter("value", 0, 0.1)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 	expected = []byte(`{"value":0.1}`)
-	res = parameter.ToJSON()
+	res = parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -39,13 +39,13 @@ func TestArithmeticFloatSequenceParameterAsJSON(t *testing.T) {
 func TestGeometricSequenceParameterAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":1}`)
-	parameter = NewGeometricSequenceParameter(1, 10)
-	res := parameter.ToJSON()
+	parameter = NewGeometricSequenceParameter("value", 1, 10)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 	expected = []byte(`{"value":10}`)
-	res = parameter.ToJSON()
+	res = parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -55,13 +55,13 @@ func TestGeometricFloatSequenceParameterAsJSON(t *testing.T) {
 
 	var parameter Parameter
 	expected := []byte(`{"value":10}`)
-	parameter = NewGeometricSequenceParameter(10, 0.1)
-	res := parameter.ToJSON()
+	parameter = NewGeometricSequenceParameter("value", 10, 0.1)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 	expected = []byte(`{"value":1}`)
-	res = parameter.ToJSON()
+	res = parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -71,8 +71,8 @@ func TestRandomParameterAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":0}`)
 	rand.Seed(0)
-	parameter = NewRandomParameter(0, 1)
-	res := parameter.ToJSON()
+	parameter = NewRandomParameter("value", 0, 1)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
@@ -82,14 +82,14 @@ func TestRandomParameterRandomAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":4}`)
 	rand.Seed(0)
-	parameter = NewRandomParameter(0, 10)
-	res := parameter.ToJSON()
+	parameter = NewRandomParameter("value", 0, 10)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 	rand.Seed(1)
 	expected = []byte(`{"value":1}`)
-	res = parameter.ToJSON()
+	res = parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}

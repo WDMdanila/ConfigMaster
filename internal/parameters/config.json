@@ -1,45 +1,30 @@
 {
-  "first_param": {
-    "type": "string",
-    "value": "first_param_value"
-  },
-  "second_param": {
-    "type": "bool",
-    "value": true
-  },
-  "third_param": {
-    "type": "number",
-    "value": 3
-  },
-  "tenth_param": {
-    "type": "number",
-    "value": 3.1415926
-  },
+  "first_param": "first_param_value",
+  "second_param": true,
+  "third_param": 3,
+  "tenth_param": 3.1415926,
   "ninth_param": {
-    "type": "json",
-    "value": {
       "field1": "value 1",
       "field2": true,
       "field3": 1
-    }
   },
   "fourth_param": {
-    "type": "arithmetic sequence",
+    "parameter_type": "arithmetic sequence",
     "value": 0,
     "increment": 1
   },
   "fifth_param": {
-    "type": "geometric sequence",
+    "parameter_type": "geometric sequence",
     "value": 1,
     "multiplier": 2
   },
   "sixth_param": {
-    "type": "random",
+    "parameter_type": "random",
     "min": 0,
     "max": 10
   },
   "seventh_param": {
-    "type": "sequential selection",
+    "parameter_type": "sequential selection",
     "values": [
       "one",
       "two",
@@ -47,7 +32,7 @@
     ]
   },
   "eighth_param": {
-    "type": "random selection",
+    "parameter_type": "random selection",
     "values": [
       "one",
       "two",
@@ -55,7 +40,7 @@
     ]
   },
   "eleventh_param": {
-    "type": "sequential selection",
+    "parameter_type": "sequential selection",
     "values": [
       1,
       2,

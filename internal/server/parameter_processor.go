@@ -9,8 +9,8 @@ type ParameterProcessor struct {
 	parameters.Parameter
 }
 
-func (handler *ParameterProcessor) Process(*http.Request) ([]byte, error) {
-	return handler.ToJSON(), nil
+func (handler *ParameterProcessor) Process(*http.Request) []byte {
+	return handler.GetAsJSON()
 }
 
 func NewParameterHandler(path string, parameter parameters.Parameter) RequestHandler {

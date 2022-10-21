@@ -5,51 +5,103 @@ import (
 	"testing"
 )
 
-func TestSimpleParameterStringValueAsJSON(t *testing.T) {
+func TestNamedParameterName(t *testing.T) {
+	parameter := NamedParameter{name: "name"}
+	if parameter.Name() != "name" {
+		t.Fail()
+	}
+}
+
+func TestSimpleParameterStringValueGetAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":"value"}`)
-	parameter = NewSimpleParameter("value")
-	res := parameter.ToJSON()
+	parameter = NewSimpleParameter("value", "value")
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 }
 
-func TestSimpleParameterIntValueAsJSON(t *testing.T) {
+func TestSimpleParameterStringValueSet(t *testing.T) {
+	var parameter Parameter
+	expected := []byte(`{"value":"value"}`)
+	parameter = NewSimpleParameter("value", "qwe")
+	parameter.Set("value")
+	res := parameter.GetAsJSON()
+	if !bytes.Equal(res, expected) {
+		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	}
+}
+
+func TestSimpleParameterIntValueGetAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":1}`)
-	parameter = NewSimpleParameter(1)
-	res := parameter.ToJSON()
+	parameter = NewSimpleParameter("value", 1)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 }
 
-func TestSimpleParameterBoolValueAsJSON(t *testing.T) {
+func TestSimpleParameterIntValueSet(t *testing.T) {
+	var parameter Parameter
+	expected := []byte(`{"value":1}`)
+	parameter = NewSimpleParameter("value", 0)
+	parameter.Set(1)
+	res := parameter.GetAsJSON()
+	if !bytes.Equal(res, expected) {
+		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	}
+}
+
+func TestSimpleParameterBoolValueGetAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":true}`)
-	parameter = NewSimpleParameter(true)
-	res := parameter.ToJSON()
+	parameter = NewSimpleParameter("value", true)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 }
 
-func TestSimpleParameterJsonValueAsJSON(t *testing.T) {
+func TestSimpleParameterBoolValueSet(t *testing.T) {
+	var parameter Parameter
+	expected := []byte(`{"value":true}`)
+	parameter = NewSimpleParameter("value", false)
+	parameter.Set(true)
+	res := parameter.GetAsJSON()
+	if !bytes.Equal(res, expected) {
+		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	}
+}
+
+func TestSimpleParameterJsonValueGetAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":{"field1":"value 1","field2":true,"field3":1}}`)
-	parameter = NewJSONParameter([]byte(`{"field1":"value 1","field2":true,"field3":1}`))
-	res := parameter.ToJSON()
+	parameter = NewSimpleParameter("value", []byte(`{"field1":"value 1","field2":true,"field3":1}`))
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}
 }
 
-func TestSimpleParameterFloatValueAsJSON(t *testing.T) {
+func TestSimpleParameterJsonValueSet(t *testing.T) {
+	var parameter Parameter
+	expected := []byte(`{"value":{"field1":"value 1","field2":true,"field3":1}}`)
+	parameter = NewSimpleParameter("value", []byte(`{}`))
+	parameter.Set([]byte(`{"field1":"value 1","field2":true,"field3":1}`))
+	res := parameter.GetAsJSON()
+	if !bytes.Equal(res, expected) {
+		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	}
+}
+
+func TestSimpleParameterFloatValueGetAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":3.141592653589793}`)
-	parameter = NewSimpleParameter(3.141592653589793)
-	res := parameter.ToJSON()
+	parameter = NewSimpleParameter("value", float64(0))
+	parameter.Set(3.141592653589793)
+	res := parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
 	}

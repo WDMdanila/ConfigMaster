@@ -36,10 +36,6 @@ func createConfigHandlers(configDirectory string) []server.RequestHandler {
 	return handlers
 }
 
-func createTimestampHandler() server.RequestHandler {
-	return server.NewTimestampHandler("/timestamp", 1_000_000_000)
-}
-
 func parseArgs() (string, string) {
 	address := flag.String("address", "", "address to use")
 	port := flag.Int64("port", 3333, "port to use")
@@ -52,7 +48,6 @@ func parseArgs() (string, string) {
 func main() {
 	address, configDir := parseArgs()
 	handlers := createConfigHandlers(configDir)
-	handlers = append(handlers, createTimestampHandler())
 	configServer := server.NewConfigServer(address, handlers)
 	defer configServer.Shutdown()
 	go configServer.ListenAndServe()
