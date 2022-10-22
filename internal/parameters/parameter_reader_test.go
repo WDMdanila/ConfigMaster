@@ -5,6 +5,13 @@ import (
 	"testing"
 )
 
+func TestJSONParameterReaderReadNonExistent(t *testing.T) {
+	reader := NewJSONParameterReader("test_configs/does_not_exist")
+	defer func() { _ = recover() }()
+	reader.Read()
+	t.Fail()
+}
+
 func TestJSONParameterReaderRead(t *testing.T) {
 	expected := 11
 	reader := NewJSONParameterReader("test_configs/correct_config1.json")
@@ -47,6 +54,13 @@ func TestJSONParameterReaderReadFail4(t *testing.T) {
 
 func TestJSONParameterReaderReadFail5(t *testing.T) {
 	reader := NewJSONParameterReader("test_configs/wrong_config5.json")
+	defer func() { _ = recover() }()
+	reader.Read()
+	t.Fail()
+}
+
+func TestJSONParameterReaderReadFail6(t *testing.T) {
+	reader := NewJSONParameterReader("test_configs/wrong_config6.json")
 	defer func() { _ = recover() }()
 	reader.Read()
 	t.Fail()

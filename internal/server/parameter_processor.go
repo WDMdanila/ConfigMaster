@@ -18,7 +18,7 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 			panic(err)
 		}
 		handler.Set(data)
-		return []byte(`{"result": "OK"}`)
+		return []byte(`{"result":"OK"}`)
 	default:
 		return handler.GetAsJSON()
 	}

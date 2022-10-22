@@ -9,13 +9,13 @@ type NamedParameter struct {
 	name string
 }
 
-type SimpleParameter[T any] struct {
+type SimpleParameter struct {
 	NamedParameter
-	Value T
+	Value interface{}
 }
 
-func (parameter *SimpleParameter[T]) GetAsJSON() []byte {
-	tmp := map[string]T{parameter.name: parameter.Value}
+func (parameter *SimpleParameter) GetAsJSON() []byte {
+	tmp := map[string]interface{}{parameter.name: parameter.Value}
 	jsonBytes, err := json.Marshal(tmp)
 	if err != nil {
 		panic(err)
@@ -27,21 +27,15 @@ func (parameter *NamedParameter) Name() string {
 	return parameter.name
 }
 
-func (parameter *SimpleParameter[T]) Set(data []byte) {
-	parameter.Value = utils.ExtractFromJSON[T](data, "value")
+func (parameter *SimpleParameter) Set(data []byte) {
+	parameter.Value = utils.ExtractFromJSON[interface{}](data, "value")
 }
 
 func NewSimpleParameter(name string, data interface{}) Parameter {
 	switch value := data.(type) {
-	case float64:
-		return &SimpleParameter[float64]{NamedParameter: NamedParameter{name: name}, Value: value}
-	case bool:
-		return &SimpleParameter[bool]{NamedParameter: NamedParameter{name: name}, Value: value}
-	case string:
-		return &SimpleParameter[string]{NamedParameter: NamedParameter{name: name}, Value: value}
 	case []byte:
-		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: utils.DecodeJSON[interface{}](value)}
+		return &SimpleParameter{NamedParameter: NamedParameter{name: name}, Value: utils.DecodeJSON[interface{}](value)}
 	default:
-		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: value}
+		return &SimpleParameter{NamedParameter: NamedParameter{name: name}, Value: value}
 	}
 }
