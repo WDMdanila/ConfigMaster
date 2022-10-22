@@ -2,6 +2,7 @@ package server
 
 import (
 	"config_master/internal/parameters"
+	"encoding/json"
 	"io"
 	"net/http"
 )
@@ -15,9 +16,16 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 	case "POST":
 		data, err := io.ReadAll(request.Body)
 		if err != nil {
-			panic(err)
+			val := map[string]string{"error": err.Error()}
+			res, _ := json.Marshal(val)
+			return res
 		}
-		handler.Set(data)
+		err = handler.Set(data)
+		if err != nil {
+			val := map[string]string{"error": err.Error()}
+			res, _ := json.Marshal(val)
+			return res
+		}
 		return []byte(`{"result":"OK"}`)
 	default:
 		return handler.GetAsJSON()

@@ -11,8 +11,13 @@ type SelectionParameter struct {
 	Value []interface{}
 }
 
-func (parameter *SelectionParameter) Set(data []byte) {
-	parameter.Value = utils.ExtractFromJSON[[]interface{}](data, "value")
+func (parameter *SelectionParameter) Set(data []byte) error {
+	res, err := utils.ExtractFromJSON[[]interface{}](data, "values")
+	if err != nil {
+		return err
+	}
+	parameter.Value = res
+	return nil
 }
 
 type RandomSelectionParameter struct {

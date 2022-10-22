@@ -55,14 +55,15 @@ func TestDecodeJSONFail(t *testing.T) {
 
 func TestExtractFromJSON(t *testing.T) {
 	expected := float64(1)
-	res := ExtractFromJSON[float64]([]byte(`{"value":1}`), "value")
-	if res != expected {
+	res, err := ExtractFromJSON[float64]([]byte(`{"value":1}`), "value")
+	if err == nil && res != expected {
 		t.Fail()
 	}
 }
 
 func TestExtractFromJSONFail(t *testing.T) {
-	defer func() { _ = recover() }()
-	ExtractFromJSON[string]([]byte(`{"value":1}`), "value")
-	t.Fail()
+	_, err := ExtractFromJSON[string]([]byte(`{"value":1}`), "value")
+	if err == nil {
+		t.Fail()
+	}
 }

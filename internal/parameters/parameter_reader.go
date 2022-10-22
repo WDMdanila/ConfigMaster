@@ -13,20 +13,21 @@ type ParameterReader interface {
 }
 
 type JSONParameterReader struct {
-	filePath string
+	filePath    string
+	strictTypes bool
 }
 
 func (parameterReader *JSONParameterReader) Read() map[string]Parameter {
 	data := parseJSONFile(parameterReader.filePath)
 	res := map[string]Parameter{}
 	for key, element := range data {
-		res[key] = parseParameter(key, element)
+		res[key] = parseParameter(key, element, parameterReader.strictTypes)
 	}
 	return res
 }
 
-func NewJSONParameterReader(filePath string) ParameterReader {
-	return &JSONParameterReader{filePath: filePath}
+func NewJSONParameterReader(filePath string, strictTypes bool) ParameterReader {
+	return &JSONParameterReader{filePath: filePath, strictTypes: strictTypes}
 }
 
 func parseJSONFile(filePath string) map[string]interface{} {
@@ -64,11 +65,14 @@ func closeFile(file *os.File) {
 	}
 }
 
-func parseParameter(name string, element interface{}) Parameter {
+func parseParameter(name string, element interface{}, strictType bool) Parameter {
 	switch elem := element.(type) {
 	case map[string]interface{}:
 		return FromJSON(name, elem)
 	default:
+		if strictType {
+			return NewSimpleStrictParameter(name, elem)
+		}
 		return NewSimpleParameter(name, elem)
 	}
 }

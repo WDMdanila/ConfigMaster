@@ -77,6 +77,39 @@ func TestRandomParameterAsJSON(t *testing.T) {
 	}
 }
 
+func TestRandomParameterSet(t *testing.T) {
+	var parameter Parameter
+	expected := []byte(`{"value":84}`)
+	rand.Seed(10)
+	parameter = NewRandomParameter("value", 0, 1)
+	err := parameter.Set([]byte(`{"min":10,"max":100}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := parameter.GetAsJSON()
+	if !bytes.Equal(res, expected) {
+		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	}
+}
+
+func TestRandomParameterSetFail(t *testing.T) {
+	var parameter Parameter
+	parameter = NewRandomParameter("value", 0, 1)
+	err := parameter.Set([]byte(`{"min":"fail","max":100}`))
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRandomParameterSetFail2(t *testing.T) {
+	var parameter Parameter
+	parameter = NewRandomParameter("value", 0, 1)
+	err := parameter.Set([]byte(`{"min":1,"max":"100"}`))
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
 func TestRandomParameterRandomAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":4}`)

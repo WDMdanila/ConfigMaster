@@ -19,9 +19,18 @@ type RandomParameter struct {
 	max int
 }
 
-func (parameter *RandomParameter) Set(i []byte) {
-	parameter.min = int(utils.ExtractFromJSON[float64](i, "min"))
-	parameter.max = int(utils.ExtractFromJSON[float64](i, "max"))
+func (parameter *RandomParameter) Set(data []byte) error {
+	min, err := utils.ExtractFromJSON[float64](data, "min")
+	if err != nil {
+		return err
+	}
+	max, err := utils.ExtractFromJSON[float64](data, "max")
+	if err != nil {
+		return err
+	}
+	parameter.min = int(min)
+	parameter.max = int(max)
+	return nil
 }
 
 type ArithmeticSequenceParameter struct {
@@ -29,8 +38,8 @@ type ArithmeticSequenceParameter struct {
 	increment float64
 }
 
-func (parameter *ArithmeticSequenceParameter) Set(bytes []byte) {
-	//TODO implement me
+func (parameter *ArithmeticSequenceParameter) Set(bytes []byte) error {
+	//TODO: implement me
 	panic("implement me")
 }
 
@@ -39,8 +48,8 @@ type GeometricSequenceParameter struct {
 	multiplier float64
 }
 
-func (parameter *GeometricSequenceParameter) Set(bytes []byte) {
-	//TODO implement me
+func (parameter *GeometricSequenceParameter) Set(bytes []byte) error {
+	//TODO: implement me
 	panic("implement me")
 }
 

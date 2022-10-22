@@ -44,12 +44,13 @@ func DecodeJSON[T any](data []byte) T {
 	return result
 }
 
-func ExtractFromJSON[T any](data []byte, field string) T {
+func ExtractFromJSON[T any](data []byte, field string) (T, error) {
+	var res T
 	tmp := DecodeJSON[map[string]interface{}](data)
 	switch value := tmp[field].(type) {
 	case T:
-		return value
+		return value, nil
 	default:
-		panic(fmt.Errorf("could not extract field %v from json %v", field, string(data)))
+		return res, fmt.Errorf("could not parse %v, got type %T", value, value)
 	}
 }
