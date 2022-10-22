@@ -7,7 +7,7 @@ import (
 
 func TestJSONParameterReaderRead(t *testing.T) {
 	expected := 11
-	reader := NewJSONParameterReader("config.json")
+	reader := NewJSONParameterReader("test_configs/correct_config1.json")
 	paramMap := reader.Read()
 	for key, val := range paramMap {
 		fmt.Printf("%v: %v\n", key, string(val.GetAsJSON()))
@@ -18,35 +18,35 @@ func TestJSONParameterReaderRead(t *testing.T) {
 }
 
 func TestJSONParameterReaderReadFail1(t *testing.T) {
-	reader := NewJSONParameterReader("wrong_config.json")
+	reader := NewJSONParameterReader("test_configs/wrong_config.json")
 	defer func() { _ = recover() }()
 	reader.Read()
 	t.Fail()
 }
 
 func TestJSONParameterReaderReadFail2(t *testing.T) {
-	reader := NewJSONParameterReader("wrong_config2.json")
+	reader := NewJSONParameterReader("test_configs/wrong_config2.json")
 	defer func() { _ = recover() }()
 	reader.Read()
 	t.Fail()
 }
 
 func TestJSONParameterReaderReadFail3(t *testing.T) {
-	reader := NewJSONParameterReader("wrong_config3.json")
+	reader := NewJSONParameterReader("test_configs/wrong_config3.json")
 	defer func() { _ = recover() }()
 	reader.Read()
 	t.Fail()
 }
 
-func TestJSONParameterReaderReadFail6(t *testing.T) {
-	reader := NewJSONParameterReader("wrong_config6.json")
+func TestJSONParameterReaderReadFail4(t *testing.T) {
+	reader := NewJSONParameterReader("test_configs/wrong_config4.json")
 	defer func() { _ = recover() }()
 	reader.Read()
 	t.Fail()
 }
 
-func TestJSONParameterReaderReadFail7(t *testing.T) {
-	reader := NewJSONParameterReader("wrong_config7.json")
+func TestJSONParameterReaderReadFail5(t *testing.T) {
+	reader := NewJSONParameterReader("test_configs/wrong_config5.json")
 	defer func() { _ = recover() }()
 	reader.Read()
 	t.Fail()
@@ -54,7 +54,7 @@ func TestJSONParameterReaderReadFail7(t *testing.T) {
 
 func TestJSONParameterReaderReadWork(t *testing.T) {
 	expected := 1
-	reader := NewJSONParameterReader("wrong_config4.json")
+	reader := NewJSONParameterReader("test_configs/correct_config3.json")
 	paramMap := reader.Read()
 	if len(paramMap) != expected {
 		t.Fatalf("should be %v parameters, only %v present", len(paramMap), expected)
@@ -63,7 +63,7 @@ func TestJSONParameterReaderReadWork(t *testing.T) {
 
 func TestJSONParameterReaderReadWork2(t *testing.T) {
 	expected := 1
-	reader := NewJSONParameterReader("wrong_config5.json")
+	reader := NewJSONParameterReader("test_configs/correct_config2.json")
 	paramMap := reader.Read()
 	if len(paramMap) != expected {
 		t.Fatalf("should be %v parameters, only %v present", len(paramMap), expected)

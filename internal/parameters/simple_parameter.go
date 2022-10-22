@@ -3,7 +3,6 @@ package parameters
 import (
 	"config_master/internal/utils"
 	"encoding/json"
-	"fmt"
 )
 
 type NamedParameter struct {
@@ -28,16 +27,8 @@ func (parameter *NamedParameter) Name() string {
 	return parameter.name
 }
 
-func (parameter *SimpleParameter[T]) Set(data interface{}) {
-	switch value := data.(type) {
-	case []byte:
-		parameter.Value = utils.DecodeJSON[T](value)
-	case T:
-		parameter.Value = value
-	default:
-		err := fmt.Errorf("parameter %v with type %T received wrong type of value: %T", parameter.name, parameter.Value, value)
-		panic(err)
-	}
+func (parameter *SimpleParameter[T]) Set(data []byte) {
+	parameter.Value = utils.ExtractFromJSON[T](data, "value")
 }
 
 func NewSimpleParameter(name string, data interface{}) Parameter {

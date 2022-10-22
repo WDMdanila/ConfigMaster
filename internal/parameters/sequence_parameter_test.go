@@ -52,7 +52,6 @@ func TestGeometricSequenceParameterAsJSON(t *testing.T) {
 }
 
 func TestGeometricFloatSequenceParameterAsJSON(t *testing.T) {
-
 	var parameter Parameter
 	expected := []byte(`{"value":10}`)
 	parameter = NewGeometricSequenceParameter("value", 10, 0.1)

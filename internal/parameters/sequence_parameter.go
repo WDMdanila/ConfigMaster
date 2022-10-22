@@ -17,7 +17,7 @@ type RandomParameter struct {
 	max int
 }
 
-func (parameter *RandomParameter) Set(i interface{}) {
+func (parameter *RandomParameter) Set(i []byte) {
 	//TODO implement me
 	panic("implement me")
 }

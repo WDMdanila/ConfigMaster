@@ -15,7 +15,7 @@ type RandomSelectionParameter[T any] struct {
 	SelectionParameter[T]
 }
 
-func (parameter *RandomSelectionParameter[T]) Set(i interface{}) {
+func (parameter *RandomSelectionParameter[T]) Set(i []byte) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -26,7 +26,7 @@ type SequentialSelectionParameter[T any] struct {
 	mutex sync.Mutex
 }
 
-func (parameter *SequentialSelectionParameter[T]) Set(i interface{}) {
+func (parameter *SequentialSelectionParameter[T]) Set(i []byte) {
 	//TODO implement me
 	panic("implement me")
 }

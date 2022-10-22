@@ -43,3 +43,13 @@ func DecodeJSON[T any](data []byte) T {
 	}
 	return result
 }
+
+func ExtractFromJSON[T any](data []byte, field string) T {
+	tmp := DecodeJSON[map[string]interface{}](data)
+	switch value := tmp[field].(type) {
+	case T:
+		return value
+	default:
+		panic(fmt.Errorf("could not extract field %v from json %v", field, string(data)))
+	}
+}

@@ -44,11 +44,25 @@ func TestGetAsJSONError(t *testing.T) {
 }
 
 func TestDecodeJSON(t *testing.T) {
-	_ = DecodeJSON[interface{}]([]byte(`{"test":"test"}`))
+	_ = DecodeJSON[interface{}]([]byte(`{"value":"test"}`))
 }
 
 func TestDecodeJSONFail(t *testing.T) {
 	defer func() { _ = recover() }()
 	DecodeJSON[[]byte](nil)
+	t.Fail()
+}
+
+func TestExtractFromJSON(t *testing.T) {
+	expected := float64(1)
+	res := ExtractFromJSON[float64]([]byte(`{"value":1}`), "value")
+	if res != expected {
+		t.Fail()
+	}
+}
+
+func TestExtractFromJSONFail(t *testing.T) {
+	defer func() { _ = recover() }()
+	ExtractFromJSON[string]([]byte(`{"value":1}`), "value")
 	t.Fail()
 }
