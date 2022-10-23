@@ -10,12 +10,15 @@ var parameterTypeMap = map[string]func(string, map[string]interface{}) Parameter
 	"random":               newRandomParameter,
 }
 
-func FromJSON(name string, json map[string]interface{}) Parameter {
+func FromJSON(name string, json map[string]interface{}, strictType bool) Parameter {
 	if val, ok := json["parameter_type"]; ok {
 		switch paramType := val.(type) {
 		case string:
 			return parameterTypeMap[paramType](name, json)
 		}
+	}
+	if strictType {
+		return NewSimpleStrictParameter(name, json)
 	}
 	return NewSimpleParameter(name, json)
 }

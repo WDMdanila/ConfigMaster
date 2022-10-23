@@ -68,7 +68,7 @@ func closeFile(file *os.File) {
 func parseParameter(name string, element interface{}, strictType bool) Parameter {
 	switch elem := element.(type) {
 	case map[string]interface{}:
-		return FromJSON(name, elem)
+		return FromJSON(name, elem, strictType)
 	default:
 		if strictType {
 			return NewSimpleStrictParameter(name, elem)
