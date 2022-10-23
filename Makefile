@@ -39,3 +39,7 @@ install:
 
 uninstall:
 	${REMOVE_CMD}
+
+.PHONY: docker
+docker:
+	docker build -t config_master -f docker/Dockerfile .
