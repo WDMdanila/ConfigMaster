@@ -50,3 +50,20 @@ func TestParameterHandlerPostFail(t *testing.T) {
 	handler := NewParameterHandler("/", parameters.NewSimpleParameter("value", 1))
 	handler.ServeHTTP(w, req)
 }
+
+func TestParameterHandlerPostFail2(t *testing.T) {
+	expected := []byte(`{"error":"failed to set value, error: could not parse 1, got type float64 but string was expected"}`)
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
+	w := httptest.NewRecorder()
+	handler := NewParameterHandler("/", parameters.NewSimpleStrictParameter("value", "1"))
+	handler.ServeHTTP(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+	resp, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(resp, expected) {
+		t.Fatalf(`expected %v got %v`, string(expected), string(resp))
+	}
+}

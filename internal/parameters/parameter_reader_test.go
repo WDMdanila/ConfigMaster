@@ -24,6 +24,18 @@ func TestJSONParameterReaderRead(t *testing.T) {
 	}
 }
 
+func TestJSONParameterReaderReadNonStrict(t *testing.T) {
+	expected := 11
+	reader := NewJSONParameterReader("test_configs/correct_config1.json", false)
+	paramMap := reader.Read()
+	for key, val := range paramMap {
+		fmt.Printf("%v: %v\n", key, string(val.GetAsJSON()))
+	}
+	if len(paramMap) != expected {
+		t.Fatalf("should be %v parameters, only %v present", len(paramMap), expected)
+	}
+}
+
 func TestJSONParameterReaderReadFail1(t *testing.T) {
 	reader := NewJSONParameterReader("test_configs/wrong_config.json", true)
 	defer func() { _ = recover() }()

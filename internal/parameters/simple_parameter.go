@@ -40,7 +40,7 @@ func (parameter *SimpleParameter[T]) Set(data []byte) error {
 func NewSimpleParameter(name string, data interface{}) Parameter {
 	switch value := data.(type) {
 	case []byte:
-		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: utils.DecodeJSON[map[string]interface{}](value)}
+		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: utils.DecodeJSON[interface{}](value)}
 	default:
 		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: value}
 	}
@@ -54,6 +54,8 @@ func NewSimpleStrictParameter(name string, data interface{}) Parameter {
 		return &SimpleParameter[bool]{NamedParameter: NamedParameter{name: name}, Value: value}
 	case string:
 		return &SimpleParameter[string]{NamedParameter: NamedParameter{name: name}, Value: value}
+	case []interface{}:
+		return &SimpleParameter[[]interface{}]{NamedParameter: NamedParameter{name: name}, Value: value}
 	case []byte:
 		val := utils.DecodeJSON[interface{}](value)
 		switch v := val.(type) {
