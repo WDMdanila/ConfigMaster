@@ -16,15 +16,11 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 	case "POST":
 		data, err := io.ReadAll(request.Body)
 		if err != nil {
-			val := map[string]string{"error": err.Error()}
-			res, _ := json.Marshal(val)
-			return res
+			return parseError(err)
 		}
 		err = handler.Set(data)
 		if err != nil {
-			val := map[string]string{"error": err.Error()}
-			res, _ := json.Marshal(val)
-			return res
+			return parseError(err)
 		}
 		return []byte(`{"result":"OK"}`)
 	default:
@@ -34,4 +30,10 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 
 func NewParameterHandler(path string, parameter parameters.Parameter) RequestHandler {
 	return &DefaultRequestHandler{path: path, Processor: &ParameterProcessor{parameter}}
+}
+
+func parseError(err error) []byte {
+	val := map[string]string{"error": err.Error()}
+	res, _ := json.Marshal(val)
+	return res
 }

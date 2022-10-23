@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 )
 
@@ -42,7 +41,7 @@ func parseArgs() (string, string, bool) {
 	configDir := flag.String("config-dir", "./configs", "path to directory with configs")
 	strictTypes := flag.Bool("strict", false, "disallow parameters' type changes")
 	flag.Parse()
-	finalAddress := *address + ":" + strconv.FormatInt(*port, 10)
+	finalAddress := fmt.Sprintf("%v:%v", *address, *port)
 	return finalAddress, *configDir, *strictTypes
 }
 
