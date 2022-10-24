@@ -69,7 +69,7 @@ func TestParameterHandlerPutFail(t *testing.T) {
 }
 
 func TestParameterHandlerPutFail2(t *testing.T) {
-	expected := []byte(`{"error":"failed to set value, error: could not parse 1, got type float64 but string was expected"}`)
+	expected := []byte(`{"error":"failed to set value of type string, error: could not parse 1, got type float64"}`)
 	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
 	w := httptest.NewRecorder()
 	handler := NewParameterHandler("/", parameters.NewSimpleStrictParameter("value", "1"))

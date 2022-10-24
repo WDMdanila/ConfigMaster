@@ -1,6 +1,8 @@
 package parameters
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var parameterTypeMap = map[string]func(string, map[string]interface{}) Parameter{
 	"sequential selection": newSequentialSelectionParameter,
@@ -70,18 +72,15 @@ func retrieveFloat(element map[string]interface{}, name string) float64 {
 	case float64:
 		return elem
 	default:
-		panic(fmt.Errorf(`could not parse "%v", got type "%T"`, elem, elem))
+		panic(fmt.Errorf("could not convert %T to float", elem))
 	}
 }
 
 func retrieveInt(element map[string]interface{}, name string) int {
-	var value int
 	switch elem := element[name].(type) {
 	case float64:
-		value = int(elem)
+		return int(elem)
 	default:
-		err := fmt.Sprintf(`could not parse "%v", got type "%T"`, elem, elem)
-		panic(err)
+		panic(fmt.Errorf("could not convert %T to int", elem))
 	}
-	return value
 }

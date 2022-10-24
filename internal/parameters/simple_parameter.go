@@ -4,6 +4,7 @@ import (
 	"config_master/internal/utils"
 	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type NamedParameter struct {
@@ -15,13 +16,9 @@ type SimpleParameter[T any] struct {
 	Value T
 }
 
-func (parameter *SimpleParameter[T]) GetAsJSON() []byte {
+func (parameter *SimpleParameter[T]) GetAsJSON() ([]byte, error) {
 	tmp := map[string]interface{}{parameter.name: parameter.Value}
-	jsonBytes, err := json.Marshal(tmp)
-	if err != nil {
-		panic(err)
-	}
-	return jsonBytes
+	return json.Marshal(tmp)
 }
 
 func (parameter *NamedParameter) Name() string {
@@ -31,7 +28,7 @@ func (parameter *NamedParameter) Name() string {
 func (parameter *SimpleParameter[T]) Set(data []byte) error {
 	res, err := utils.ExtractFromJSON[T](data, "value")
 	if err != nil {
-		return fmt.Errorf("failed to set %v, error: %v but %T was expected", parameter.name, err, parameter.Value)
+		return fmt.Errorf("failed to set %v of type %T, error: %v", parameter.name, parameter.Value, err)
 	}
 	parameter.Value = res
 	return nil
@@ -40,7 +37,11 @@ func (parameter *SimpleParameter[T]) Set(data []byte) error {
 func NewSimpleParameter(name string, data interface{}) Parameter {
 	switch value := data.(type) {
 	case []byte:
-		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: utils.DecodeJSON[interface{}](value)}
+		res, err := utils.DecodeJSON[interface{}](value)
+		if err != nil {
+			log.Panic(err)
+		}
+		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: res}
 	default:
 		return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, Value: value}
 	}
@@ -66,7 +67,10 @@ func NewSimpleStrictParameter(name string, data interface{}) Parameter {
 }
 
 func parseRawJSON(name string, value []byte) Parameter {
-	val := utils.DecodeJSON[interface{}](value)
+	val, err := utils.DecodeJSON[interface{}](value)
+	if err != nil {
+		log.Panic(err)
+	}
 	switch v := val.(type) {
 	case map[string]interface{}:
 		return &SimpleParameter[map[string]interface{}]{NamedParameter: NamedParameter{name: name}, Value: v}

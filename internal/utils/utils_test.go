@@ -7,7 +7,10 @@ import (
 
 func TestFindFilesWithExtInDirectory(t *testing.T) {
 	expected := 2
-	modFile := FindFilesWithExtInDirectory("./", "txt")
+	modFile, err := FindFilesWithExtInDirectory("./", "txt")
+	if err != nil {
+		t.Fatal(err)
+	}
 	modCount := len(modFile)
 	if modCount != expected {
 		t.Fatalf("found wrong number of .txt files in directory: %v, expected: %v", modCount, expected)
@@ -15,9 +18,10 @@ func TestFindFilesWithExtInDirectory(t *testing.T) {
 }
 
 func TestFindFilesWithExtInNonExistentDirectory(t *testing.T) {
-	defer func() { _ = recover() }()
-	FindFilesWithExtInDirectory("./does_not_exist", "txt")
-	t.Fail()
+	_, err := FindFilesWithExtInDirectory("./does_not_exist", "txt")
+	if err == nil {
+		t.Fatal("expected error")
+	}
 }
 
 func TestGetFilenameWithoutExt(t *testing.T) {
@@ -31,26 +35,34 @@ func TestGetFilenameWithoutExt(t *testing.T) {
 
 func TestGetAsJSON(t *testing.T) {
 	expected := []byte(`{"test":"test"}`)
-	res := GetAsJSON("test", "test")
+	res, err := GetAsJSON("test", "test")
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("encoding data as JSON: expected: %v, got: %v", string(expected), string(res))
 	}
 }
 
 func TestGetAsJSONError(t *testing.T) {
-	defer func() { _ = recover() }()
-	GetAsJSON("test", make(chan int))
-	t.Fail()
+	_, err := GetAsJSON("test", make(chan int))
+	if err == nil {
+		t.Fatal("expected error")
+	}
 }
 
 func TestDecodeJSON(t *testing.T) {
-	_ = DecodeJSON[interface{}]([]byte(`{"value":"test"}`))
+	_, err := DecodeJSON[interface{}]([]byte(`{"value":"test"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestDecodeJSONFail(t *testing.T) {
-	defer func() { _ = recover() }()
-	DecodeJSON[[]byte](nil)
-	t.Fail()
+	_, err := DecodeJSON[[]byte](nil)
+	if err == nil {
+		t.Fatal("expected error")
+	}
 }
 
 func TestExtractFromJSON(t *testing.T) {

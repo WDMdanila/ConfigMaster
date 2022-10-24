@@ -22,7 +22,11 @@ func extractConfigFileNameAndPath(fileName string) (string, string) {
 
 func createConfigHandlers(configDirectory string, strictTypes bool) []server.RequestHandler {
 	var handlers []server.RequestHandler
-	for _, configFile := range utils.FindFilesWithExtInDirectory(configDirectory, "json") {
+	configFiles, err := utils.FindFilesWithExtInDirectory(configDirectory, "json")
+	if err != nil {
+		panic(err)
+	}
+	for _, configFile := range configFiles {
 		var configHttpPath string
 		configFile, configHttpPath = extractConfigFileNameAndPath(configFile)
 		paramReader := parameters.NewJSONParameterReader(configFile, strictTypes)

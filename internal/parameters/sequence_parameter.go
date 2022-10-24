@@ -76,7 +76,7 @@ func (parameter *GeometricSequenceParameter) Set(bytes []byte) error {
 	return nil
 }
 
-func (parameter *RandomParameter) GetAsJSON() []byte {
+func (parameter *RandomParameter) GetAsJSON() ([]byte, error) {
 	return utils.GetAsJSON(parameter.name, rand.Intn(parameter.max-parameter.min)+parameter.min)
 }
 
@@ -84,16 +84,12 @@ func NewRandomParameter(name string, min int, max int) Parameter {
 	return &RandomParameter{NamedParameter: NamedParameter{name: name}, min: min, max: max}
 }
 
-func (parameter *ArithmeticSequenceParameter) GetAsJSON() []byte {
+func (parameter *ArithmeticSequenceParameter) GetAsJSON() ([]byte, error) {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
 	defer parameter.update()
 	tmp := map[string]interface{}{parameter.name: parameter.Value}
-	jsonBytes, err := json.Marshal(tmp)
-	if err != nil {
-		panic(err)
-	}
-	return jsonBytes
+	return json.Marshal(tmp)
 }
 
 func (parameter *ArithmeticSequenceParameter) update() {
@@ -107,16 +103,12 @@ func NewArithmeticSequenceParameter(name string, value float64, increment float6
 	}
 }
 
-func (parameter *GeometricSequenceParameter) GetAsJSON() []byte {
+func (parameter *GeometricSequenceParameter) GetAsJSON() ([]byte, error) {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
 	defer parameter.update()
 	tmp := map[string]interface{}{parameter.name: parameter.Value}
-	jsonBytes, err := json.Marshal(tmp)
-	if err != nil {
-		panic(err)
-	}
-	return jsonBytes
+	return json.Marshal(tmp)
 }
 
 func (parameter *GeometricSequenceParameter) update() {

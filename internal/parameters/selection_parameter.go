@@ -30,11 +30,11 @@ type SequentialSelectionParameter struct {
 	mutex sync.Mutex
 }
 
-func (parameter *RandomSelectionParameter) GetAsJSON() []byte {
+func (parameter *RandomSelectionParameter) GetAsJSON() ([]byte, error) {
 	return utils.GetAsJSON(parameter.name, parameter.Value[rand.Intn(len(parameter.Value))])
 }
 
-func (parameter *SequentialSelectionParameter) GetAsJSON() []byte {
+func (parameter *SequentialSelectionParameter) GetAsJSON() ([]byte, error) {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
 	defer parameter.updateIndex()

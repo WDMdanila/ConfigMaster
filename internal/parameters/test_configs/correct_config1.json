@@ -4,9 +4,9 @@
   "third_param": 3,
   "tenth_param": 3.1415926,
   "ninth_param": {
-      "field1": "value 1",
-      "field2": true,
-      "field3": 1
+    "field1": "value 1",
+    "field2": true,
+    "field3": 1
   },
   "fourth_param": {
     "parameter_type": "arithmetic sequence",

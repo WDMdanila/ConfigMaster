@@ -1,7 +1,6 @@
 package parameters
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -16,9 +15,6 @@ func TestJSONParameterReaderRead(t *testing.T) {
 	expected := 11
 	reader := NewJSONParameterReader("test_configs/correct_config1.json", true)
 	paramMap := reader.Read()
-	for key, val := range paramMap {
-		fmt.Printf("%v: %v\n", key, string(val.GetAsJSON()))
-	}
 	if len(paramMap) != expected {
 		t.Fatalf("should be %v parameters, only %v present", len(paramMap), expected)
 	}
@@ -28,9 +24,6 @@ func TestJSONParameterReaderReadNonStrict(t *testing.T) {
 	expected := 11
 	reader := NewJSONParameterReader("test_configs/correct_config1.json", false)
 	paramMap := reader.Read()
-	for key, val := range paramMap {
-		fmt.Printf("%v: %v\n", key, string(val.GetAsJSON()))
-	}
 	if len(paramMap) != expected {
 		t.Fatalf("should be %v parameters, only %v present", len(paramMap), expected)
 	}

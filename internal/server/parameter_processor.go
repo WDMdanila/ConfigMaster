@@ -25,7 +25,11 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 		}
 		return []byte(`{"result":"OK"}`)
 	case http.MethodGet:
-		return handler.GetAsJSON()
+		result, err := handler.GetAsJSON()
+		if err != nil {
+			return parseError(err)
+		}
+		return result
 	}
 	return parseError(fmt.Errorf("method %v not supported", request.Method))
 }

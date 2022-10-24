@@ -2,6 +2,6 @@ package parameters
 
 type Parameter interface {
 	Name() string
-	GetAsJSON() []byte
+	GetAsJSON() ([]byte, error)
 	Set([]byte) error
 }
