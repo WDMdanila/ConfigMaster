@@ -5,7 +5,6 @@ EXPOSE 3333
 WORKDIR /config_master
 
 COPY ./docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 COPY . .
 
