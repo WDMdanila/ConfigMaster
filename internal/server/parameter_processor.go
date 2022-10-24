@@ -13,7 +13,7 @@ type ParameterProcessor struct {
 
 func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 	switch request.Method {
-	case "POST":
+	case http.MethodPut:
 		data, err := io.ReadAll(request.Body)
 		if err != nil {
 			return parseError(err)

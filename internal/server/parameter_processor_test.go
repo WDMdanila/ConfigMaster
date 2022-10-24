@@ -26,9 +26,9 @@ func TestParameterHandler(t *testing.T) {
 	}
 }
 
-func TestParameterHandlerPost(t *testing.T) {
+func TestParameterHandlerPut(t *testing.T) {
 	expected := []byte(`{"result":"OK"}`)
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
+	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
 	w := httptest.NewRecorder()
 	handler := NewParameterHandler("/", parameters.NewSimpleParameter("value", 1))
 	handler.ServeHTTP(w, req)
@@ -43,17 +43,17 @@ func TestParameterHandlerPost(t *testing.T) {
 	}
 }
 
-func TestParameterHandlerPostFail(t *testing.T) {
+func TestParameterHandlerPutFail(t *testing.T) {
 	defer func() { _ = recover() }()
-	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	req := httptest.NewRequest(http.MethodPut, "/", nil)
 	w := httptest.NewRecorder()
 	handler := NewParameterHandler("/", parameters.NewSimpleParameter("value", 1))
 	handler.ServeHTTP(w, req)
 }
 
-func TestParameterHandlerPostFail2(t *testing.T) {
+func TestParameterHandlerPutFail2(t *testing.T) {
 	expected := []byte(`{"error":"failed to set value, error: could not parse 1, got type float64 but string was expected"}`)
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
+	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
 	w := httptest.NewRecorder()
 	handler := NewParameterHandler("/", parameters.NewSimpleStrictParameter("value", "1"))
 	handler.ServeHTTP(w, req)
