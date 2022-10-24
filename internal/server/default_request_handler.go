@@ -11,7 +11,7 @@ type DefaultRequestHandler struct {
 }
 
 func (handler *DefaultRequestHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	log.Printf("got request to: %v\n", request.RequestURI)
+	log.Printf("got %v request to: %v\n", request.Method, request.RequestURI)
 	writer.Header().Set("Content-Type", "application/json")
 	result := handler.Process(request)
 	_, err := writer.Write(result)

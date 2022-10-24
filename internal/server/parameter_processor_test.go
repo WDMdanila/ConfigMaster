@@ -26,6 +26,23 @@ func TestParameterHandler(t *testing.T) {
 	}
 }
 
+func TestParameterHandlerFail(t *testing.T) {
+	expected := []byte(`{"error":"method POST not supported"}`)
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+	w := httptest.NewRecorder()
+	handler := NewParameterHandler("/", parameters.NewSimpleParameter("value", 1))
+	handler.ServeHTTP(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Fatalf("expected error to be nil got %v", err)
+	}
+	if !bytes.Equal(data, expected) {
+		t.Fatalf(`expected {"value":1} got %v`, string(data))
+	}
+}
+
 func TestParameterHandlerPut(t *testing.T) {
 	expected := []byte(`{"result":"OK"}`)
 	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))

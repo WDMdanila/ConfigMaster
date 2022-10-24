@@ -3,6 +3,7 @@ package server
 import (
 	"config_master/internal/parameters"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -23,9 +24,10 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 			return parseError(err)
 		}
 		return []byte(`{"result":"OK"}`)
-	default:
+	case http.MethodGet:
 		return handler.GetAsJSON()
 	}
+	return parseError(fmt.Errorf("method %v not supported", request.Method))
 }
 
 func NewParameterHandler(path string, parameter parameters.Parameter) RequestHandler {
