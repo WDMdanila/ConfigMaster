@@ -36,6 +36,23 @@ func TestArithmeticFloatSequenceParameterAsJSON(t *testing.T) {
 	}
 }
 
+func TestArithmeticSequenceParameterSet(t *testing.T) {
+	var parameter Parameter
+	parameter = NewArithmeticSequenceParameter("value", 1, 10)
+	err := parameter.Set([]byte(`{"increment":1,"value":1}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set([]byte(`{"increment":1}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set([]byte(`{}`))
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
 func TestGeometricSequenceParameterAsJSON(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":1}`)
@@ -48,6 +65,23 @@ func TestGeometricSequenceParameterAsJSON(t *testing.T) {
 	res = parameter.GetAsJSON()
 	if !bytes.Equal(res, expected) {
 		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	}
+}
+
+func TestGeometricSequenceParameterSet(t *testing.T) {
+	var parameter Parameter
+	parameter = NewGeometricSequenceParameter("value", 1, 10)
+	err := parameter.Set([]byte(`{"multiplier":1,"value":1}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set([]byte(`{"multiplier":1}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set([]byte(`{}`))
+	if err == nil {
+		t.Fatal(err)
 	}
 }
 

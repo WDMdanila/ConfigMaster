@@ -3,6 +3,7 @@ package parameters
 import (
 	"config_master/internal/utils"
 	"encoding/json"
+	"log"
 	"math/rand"
 	"sync"
 )
@@ -39,8 +40,19 @@ type ArithmeticSequenceParameter struct {
 }
 
 func (parameter *ArithmeticSequenceParameter) Set(bytes []byte) error {
-	//TODO: implement me
-	panic("implement me")
+	increment, err := utils.ExtractFromJSON[float64](bytes, "increment")
+	if err != nil {
+		return err
+	}
+	value, err := utils.ExtractFromJSON[float64](bytes, "value")
+	if err != nil {
+		log.Printf("could not set value for parameter %v leaving unchanged\n", parameter.name)
+	}
+	parameter.increment = increment
+	if err == nil {
+		parameter.Value = value
+	}
+	return nil
 }
 
 type GeometricSequenceParameter struct {
@@ -49,8 +61,19 @@ type GeometricSequenceParameter struct {
 }
 
 func (parameter *GeometricSequenceParameter) Set(bytes []byte) error {
-	//TODO: implement me
-	panic("implement me")
+	multiplier, err := utils.ExtractFromJSON[float64](bytes, "multiplier")
+	if err != nil {
+		return err
+	}
+	value, err := utils.ExtractFromJSON[float64](bytes, "value")
+	if err != nil {
+		log.Printf("could not set value for parameter %v leaving unchanged\n", parameter.name)
+	}
+	parameter.multiplier = multiplier
+	if err == nil {
+		parameter.Value = value
+	}
+	return nil
 }
 
 func (parameter *RandomParameter) GetAsJSON() []byte {
