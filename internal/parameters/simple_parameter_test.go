@@ -9,7 +9,7 @@ import (
 func TestNamedParameterName(t *testing.T) {
 	parameter := NamedParameter{name: "name"}
 	if parameter.Name() != "name" {
-		t.Fail()
+		t.Fatal()
 	}
 }
 

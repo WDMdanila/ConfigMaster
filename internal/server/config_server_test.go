@@ -21,5 +21,5 @@ func TestConfigServerFail(t *testing.T) {
 	go server.ListenAndServe()
 	time.Sleep(100 * time.Millisecond)
 	server2.ListenAndServe()
-	t.Fail()
+	t.Fatal()
 }

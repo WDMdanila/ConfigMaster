@@ -69,13 +69,20 @@ func TestExtractFromJSON(t *testing.T) {
 	expected := float64(1)
 	res, err := ExtractFromJSON[float64]([]byte(`{"value":1}`), "value")
 	if err == nil && res != expected {
-		t.Fail()
+		t.Fatal()
 	}
 }
 
 func TestExtractFromJSONFail(t *testing.T) {
 	_, err := ExtractFromJSON[string]([]byte(`{"value":1}`), "value")
 	if err == nil {
-		t.Fail()
+		t.Fatal()
+	}
+}
+
+func TestExtractFromJSONFail2(t *testing.T) {
+	_, err := ExtractFromJSON[string]([]byte(`{`), "")
+	if err == nil {
+		t.Fatal()
 	}
 }
