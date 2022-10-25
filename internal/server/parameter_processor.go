@@ -15,10 +15,10 @@ type ParameterProcessor struct {
 
 func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 	switch request.Method {
-	case http.MethodPut:
-		return handler.handlePUT(request)
 	case http.MethodGet:
 		return parseResponse("value", handler.Value())
+	case http.MethodPut:
+		return handler.handlePUT(request)
 	}
 	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }

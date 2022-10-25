@@ -60,13 +60,14 @@ func ExtractFileNameAndPath(fileName string) (string, string) {
 func ParseFloat(fieldData map[string]interface{}, fieldName string) (float64, error) {
 	var res float64
 	if val, ok := fieldData[fieldName]; ok {
-		if value, ok := val.(float64); ok {
+		switch value := val.(type) {
+		case float64:
 			return value, nil
-		}
-		if value, ok := val.(int); ok {
+		case int:
 			return float64(value), nil
+		default:
+			return res, fmt.Errorf("could not parse value %v as float64", fieldData[fieldName])
 		}
-		return res, fmt.Errorf("could not parse value %v as float64", fieldData[fieldName])
 	}
 	return res, fmt.Errorf("could not find %v in %v", fieldName, fieldData)
 }

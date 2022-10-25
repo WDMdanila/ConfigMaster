@@ -19,9 +19,13 @@ type JSONParameterReader struct {
 
 func (parameterReader *JSONParameterReader) Read() map[string]Parameter {
 	data := parseJSONFile(parameterReader.filePath)
+	return parameterReader.fromParsedJSON(data)
+}
+
+func (parameterReader *JSONParameterReader) fromParsedJSON(data map[string]interface{}) map[string]Parameter {
 	res := map[string]Parameter{}
-	for key, element := range data {
-		parameter := parseParameter(key, element, parameterReader.strictTypes)
+	for paramName, paramData := range data {
+		parameter := parseParameter(paramName, paramData, parameterReader.strictTypes)
 		res[parameter.Name()] = parameter
 	}
 	return res
