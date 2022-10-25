@@ -86,3 +86,15 @@ func TestExtractFromJSONFail2(t *testing.T) {
 		t.Fatal()
 	}
 }
+
+func TestExtractFileNameAndPath(t *testing.T) {
+	expectedFilePath := "folder1/filename"
+	expectedFileName := "configs/folder1/filename.txt"
+	fileName, filePath := ExtractFileNameAndPath(`configs\folder1\filename.txt`)
+	if fileName != expectedFileName {
+		t.Fatalf("expected %v, got %v", expectedFileName, fileName)
+	}
+	if filePath != expectedFilePath {
+		t.Fatalf("expected %v, got %v", expectedFilePath, filePath)
+	}
+}

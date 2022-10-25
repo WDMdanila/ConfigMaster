@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -46,4 +47,12 @@ func ExtractFromJSON[T any](data []byte, field string) (T, error) {
 	default:
 		return res, fmt.Errorf("could not parse %v, got type %T", value, value)
 	}
+}
+
+func ExtractFileNameAndPath(fileName string) (string, string) {
+	fileName = strings.ReplaceAll(fileName, `\`, "/")
+	fileName = strings.ReplaceAll(fileName, "//", "/")
+	log.Printf("found config: %v\n", fileName)
+	folderNameIndex := strings.Index(fileName, "/")
+	return fileName, GetFilenameWithoutExt(fileName[folderNameIndex+1:])
 }

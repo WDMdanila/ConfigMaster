@@ -6,21 +6,11 @@ import (
 	"config_master/internal/utils"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
-	"strings"
 )
 
-func extractConfigFileNameAndPath(fileName string) (string, string) {
-	fileName = strings.ReplaceAll(fileName, `\`, "/")
-	fileName = strings.ReplaceAll(fileName, "//", "/")
-	log.Printf("found config: %v\n", fileName)
-	folderNameIndex := strings.Index(fileName, "/")
-	return fileName, utils.GetFilenameWithoutExt(fileName[folderNameIndex+1:])
-}
-
-func createConfigHandlers(configDirectory string, strictTypes bool) []server.RequestHandler {
+func createRequestHandlers(configDirectory string, strictTypes bool) []server.RequestHandler {
 	var handlers []server.RequestHandler
 	configFiles, err := utils.FindFilesWithExtInDirectory(configDirectory, "json")
 	if err != nil {
@@ -28,7 +18,7 @@ func createConfigHandlers(configDirectory string, strictTypes bool) []server.Req
 	}
 	for _, configFile := range configFiles {
 		var configHttpPath string
-		configFile, configHttpPath = extractConfigFileNameAndPath(configFile)
+		configFile, configHttpPath = utils.ExtractFileNameAndPath(configFile)
 		paramReader := parameters.NewJSONParameterReader(configFile, strictTypes)
 		parametersMap := paramReader.Read()
 		for key, value := range parametersMap {
@@ -51,7 +41,7 @@ func parseArgs() (string, string, bool) {
 
 func main() {
 	address, configDir, strictTypes := parseArgs()
-	handlers := createConfigHandlers(configDir, strictTypes)
+	handlers := createRequestHandlers(configDir, strictTypes)
 	configServer := server.NewConfigServer(address, handlers)
 	defer configServer.Shutdown()
 	go configServer.ListenAndServe()
