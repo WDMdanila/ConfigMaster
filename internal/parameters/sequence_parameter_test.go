@@ -52,6 +52,23 @@ func TestArithmeticSequenceParameterSet(t *testing.T) {
 	}
 }
 
+func TestArithmeticSequenceParameterSet2(t *testing.T) {
+	var parameter Parameter
+	parameter = NewArithmeticSequenceParameter("value", 1, 10)
+	err := parameter.Set(map[string]float64{"increment": 1, "value": 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set(map[string]interface{}{"increment": 1, "value": 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set(nil)
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
 func TestGeometricSequenceParameterValue(t *testing.T) {
 	var parameter Parameter
 	expected := float64(1)
@@ -75,6 +92,23 @@ func TestGeometricSequenceParameterSet(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = parameter.Set(map[string]float64{"multiplier": 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set(nil)
+	if err == nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGeometricSequenceParameterSet2(t *testing.T) {
+	var parameter Parameter
+	parameter = NewGeometricSequenceParameter("value", 1, 10)
+	err := parameter.Set(map[string]float64{"multiplier": 1, "value": 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = parameter.Set(map[string]interface{}{"multiplier": 1, "value": 1})
 	if err != nil {
 		t.Fatal(err)
 	}

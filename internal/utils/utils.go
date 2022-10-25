@@ -56,3 +56,17 @@ func ExtractFileNameAndPath(fileName string) (string, string) {
 	folderNameIndex := strings.Index(fileName, "/")
 	return fileName, GetFilenameWithoutExt(fileName[folderNameIndex+1:])
 }
+
+func ParseFloat(fieldData map[string]interface{}, fieldName string) (float64, error) {
+	var res float64
+	if val, ok := fieldData[fieldName]; ok {
+		if value, ok := val.(float64); ok {
+			return value, nil
+		}
+		if value, ok := val.(int); ok {
+			return float64(value), nil
+		}
+		return res, fmt.Errorf("could not parse value %v as float64", fieldData[fieldName])
+	}
+	return res, fmt.Errorf("could not find %v in %v", fieldName, fieldData)
+}

@@ -98,3 +98,34 @@ func TestExtractFileNameAndPath(t *testing.T) {
 		t.Fatalf("expected %v, got %v", expectedFilePath, filePath)
 	}
 }
+
+func TestParseFloat(t *testing.T) {
+	given := map[string]interface{}{"value": float64(1), "value2": "2", "value3": 1}
+	expected := float64(1)
+	res, err := ParseFloat(given, "value")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res != expected {
+		t.Fatalf("expected %v, got %v", expected, res)
+	}
+	res, err = ParseFloat(given, "value2")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	res, err = ParseFloat(given, "value2")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	res, err = ParseFloat(given, "value3")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res != expected {
+		t.Fatalf("expected %v, got %v", expected, res)
+	}
+	res, err = ParseFloat(given, "value4")
+	if err == nil {
+		t.Fatal("expected error")
+	}
+}
