@@ -2,6 +2,7 @@ package parameters
 
 import (
 	"bytes"
+	"reflect"
 	"testing"
 )
 
@@ -12,106 +13,85 @@ func TestNamedParameterName(t *testing.T) {
 	}
 }
 
-func TestSimpleParameterStringValueGetAsJSON(t *testing.T) {
+func TestSimpleParameterStringValueGetValue(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":"value"}`)
+	expected := "value"
 	parameter = NewSimpleParameter("value", "value")
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
 func TestSimpleParameterStringValueSet(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":"value"}`)
+	expected := "new value"
 	parameter = NewSimpleParameter("value", "qwe")
 	err := parameter.Set(expected)
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
-func TestSimpleParameterIntValueGetAsJSON(t *testing.T) {
+func TestSimpleParameterIntValueGetValue(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":1}`)
+	expected := 1
 	parameter = NewSimpleParameter("value", 1)
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
 func TestSimpleParameterIntValueSet(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":1}`)
+	expected := 1
 	parameter = NewSimpleParameter("value", 0)
 	err := parameter.Set(expected)
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
-func TestSimpleParameterBoolValueGetAsJSON(t *testing.T) {
+func TestSimpleParameterBoolValueGetValue(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":true}`)
+	expected := true
 	parameter = NewSimpleParameter("value", true)
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
 func TestSimpleParameterBoolValueSet(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":true}`)
+	expected := true
 	parameter = NewSimpleParameter("value", false)
-	err := parameter.Set(expected)
+	err := parameter.Set(true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
-func TestSimpleParameterJSONValueGetAsJSON(t *testing.T) {
+func TestSimpleParameterJSONValueGetValue(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":{"field1":"value 1","field2":true,"field3":1}}`)
+	expected := []byte(`{"field1":"value 1","field2":true,"field3":1}`)
 	parameter = NewSimpleParameter("value", []byte(`{"field1":"value 1","field2":true,"field3":1}`))
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if !bytes.Equal(res.([]byte), expected) {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
@@ -123,36 +103,37 @@ func TestSimpleParameterJSONValueSet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if !bytes.Equal(res.([]byte), expected) {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
 func TestSimpleStrictParameterJSONValueSetFail(t *testing.T) {
 	var parameter Parameter
 	parameter = NewSimpleStrictParameter("value", []byte(`{}`))
-	err := parameter.Set([]byte(`{"value": 1}`))
+	err := parameter.Set(1)
 	if err == nil {
 		t.Fatal("Expected error")
 	}
 }
 
-func TestSimpleStrictParameterArrayValueGetAsJSON(t *testing.T) {
+func TestSimpleStrictParameterArrayValueGetValue(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":[1,2,3]}`)
+	expected := []int{1, 2, 3}
 	values := make([]interface{}, 0)
 	values = append(values, 1, 2, 3)
 	parameter = NewSimpleStrictParameter("value", values)
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	for i, value := range res.([]interface{}) {
+		switch val := value.(type) {
+		case int:
+			if val != expected[i] {
+				t.Fatalf("parameter value %v does not equal to %v", val, expected[i])
+			}
+		default:
+			t.Fatal()
+		}
 	}
 }
 
@@ -161,7 +142,7 @@ func TestSimpleStrictParameterArrayValueSetFail(t *testing.T) {
 	values := make([]interface{}, 0)
 	values = append(values, 1, 2, 3)
 	parameter = NewSimpleStrictParameter("value", values)
-	err := parameter.Set([]byte(`{"value": 1}`))
+	err := parameter.Set(1)
 	if err == nil {
 		t.Fatal("Expected error")
 	}
@@ -169,14 +150,12 @@ func TestSimpleStrictParameterArrayValueSetFail(t *testing.T) {
 
 func TestSimpleStrictParameterJSONValueArray(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":[1,2,3]}`)
+	var expected interface{}
+	expected = []byte(`[1,2,3]`)
 	parameter = NewSimpleStrictParameter("value", []byte(`[1,2,3]`))
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if !reflect.DeepEqual(res, expected) {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
@@ -184,32 +163,26 @@ func TestSimpleStrictParameterJSONValueSetArray(t *testing.T) {
 	var parameter Parameter
 	expected := []byte(`{"value":[1,2,3]}`)
 	parameter = NewSimpleStrictParameter("value", []byte(`[1,2]`))
-	err := parameter.Set([]byte(`{"value":[1,2,3]}`))
+	err := parameter.Set([]byte(`[1,2,3]`))
 	if err != nil {
 		t.Fatal()
 	}
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if bytes.Equal(res.([]byte), expected) {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 
-func TestSimpleParameterFloatValueGetAsJSON(t *testing.T) {
+func TestSimpleParameterFloatValueGetValue(t *testing.T) {
 	var parameter Parameter
-	expected := []byte(`{"value":3.141592653589793}`)
+	expected := 3.141592653589793
 	parameter = NewSimpleParameter("value", float64(0))
 	err := parameter.Set(expected)
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }

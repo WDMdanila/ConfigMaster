@@ -1,75 +1,76 @@
 package parameters
 
 import (
-	"bytes"
 	"math/rand"
 	"testing"
 )
 
-func TestRandomSelectionParameterAsJSON(t *testing.T) {
-	expected := []byte(`{"value":1}`)
+func TestRandomSelectionParameterValue(t *testing.T) {
+	expected := 1
 	var parameter Parameter
 	rand.Seed(0)
 	values := make([]interface{}, 0)
 	values = append(values, 1, 2, 3)
 	parameter = NewRandomSelectionParameter("value", values)
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
 	}
 }
 
-func TestSequentialSelectionParameterAsJSON(t *testing.T) {
-	expected := []byte(`{"value":1}`)
+func TestSequentialSelectionParameterValue(t *testing.T) {
+	expected := 1
 	var parameter Parameter
 	values := make([]interface{}, 0)
 	values = append(values, 1, 2)
 	parameter = NewSequentialSelectionParameter("value", values)
-	res, err := parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
 	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	expected = 2
+	res = parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
 	}
-	expected = []byte(`{"value":2}`)
-	res, err = parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
-	}
-	expected = []byte(`{"value":1}`)
-	res, err = parameter.GetAsJSON()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	expected = 1
+	res = parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
 	}
 }
 
 func TestRandomSelectionParameterSet(t *testing.T) {
-	expected := []byte(`{"value":4}`)
+	expected := 4
 	var parameter Parameter
 	rand.Seed(0)
 	values := make([]interface{}, 0)
 	values = append(values, 1)
 	parameter = NewRandomSelectionParameter("value", values)
-	err := parameter.Set([]byte(`{"values": [4]}`))
+	err := parameter.Set([]interface{}{4})
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := parameter.GetAsJSON()
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
+	}
+}
+
+func TestSequentialSelectionParameterSet(t *testing.T) {
+	expected := 4
+	var parameter Parameter
+	rand.Seed(0)
+	values := make([]interface{}, 0)
+	values = append(values, 1)
+	parameter = NewSequentialSelectionParameter("value", values)
+	err := parameter.Set([]interface{}{4})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(res, expected) {
-		t.Fatalf("parameter json %v does not equal to %v", string(res), string(expected))
+	res := parameter.Value()
+	if res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
 	}
 }
 

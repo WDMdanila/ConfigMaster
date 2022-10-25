@@ -39,7 +39,7 @@ func TestParameterHandlerFail(t *testing.T) {
 		t.Fatalf("expected error to be nil got %v", err)
 	}
 	if !bytes.Equal(data, expected) {
-		t.Fatalf(`expected {"value":1} got %v`, string(data))
+		t.Fatalf(`expected %v got %v`, string(expected), string(data))
 	}
 }
 
@@ -69,10 +69,10 @@ func TestParameterHandlerPutFail(t *testing.T) {
 }
 
 func TestParameterHandlerPutFail2(t *testing.T) {
-	expected := []byte(`{"error":"failed to set value of type string, error: could not parse 1, got type float64"}`)
+	expected := []byte(`{"error":"failed to set strict parameter to 1 due to type mismatch (got float64, expected string)"}`)
 	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer([]byte(`{"value": 1}`)))
 	w := httptest.NewRecorder()
-	handler := NewParameterHandler("/", parameters.NewSimpleStrictParameter("value", "1"))
+	handler := NewParameterHandler("/", parameters.NewSimpleStrictParameter("strict parameter", "1"))
 	handler.ServeHTTP(w, req)
 	res := w.Result()
 	defer res.Body.Close()

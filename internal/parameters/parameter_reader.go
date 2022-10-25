@@ -21,7 +21,8 @@ func (parameterReader *JSONParameterReader) Read() map[string]Parameter {
 	data := parseJSONFile(parameterReader.filePath)
 	res := map[string]Parameter{}
 	for key, element := range data {
-		res[key] = parseParameter(key, element, parameterReader.strictTypes)
+		parameter := parseParameter(key, element, parameterReader.strictTypes)
+		res[parameter.Name()] = parameter
 	}
 	return res
 }

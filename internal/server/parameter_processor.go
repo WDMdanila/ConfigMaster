@@ -2,6 +2,7 @@ package server
 
 import (
 	"config_master/internal/parameters"
+	"config_master/internal/utils"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,29 +18,30 @@ func (handler *ParameterProcessor) Process(request *http.Request) []byte {
 	case http.MethodPut:
 		data, err := io.ReadAll(request.Body)
 		if err != nil {
-			return parseError(err)
+			return parseResponse("error", err.Error())
 		}
-		err = handler.Set(data)
+		value, err := utils.ExtractFromJSON[interface{}](data, "value")
 		if err != nil {
-			return parseError(err)
+			return parseResponse("error", err.Error())
 		}
-		return []byte(`{"result":"OK"}`)
+		err = handler.Set(value)
+		if err != nil {
+			return parseResponse("error", err.Error())
+		}
+		return parseResponse("result", "OK")
 	case http.MethodGet:
-		result, err := handler.GetAsJSON()
-		if err != nil {
-			return parseError(err)
-		}
-		return result
+		value := handler.Value()
+		return parseResponse("value", value)
 	}
-	return parseError(fmt.Errorf("method %v not supported", request.Method))
+	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }
 
 func NewParameterHandler(path string, parameter parameters.Parameter) RequestHandler {
 	return &DefaultRequestHandler{path: path, Processor: &ParameterProcessor{parameter}}
 }
 
-func parseError(err error) []byte {
-	val := map[string]string{"error": err.Error()}
+func parseResponse(name string, value interface{}) []byte {
+	val := map[string]interface{}{name: value}
 	res, _ := json.Marshal(val)
 	return res
 }

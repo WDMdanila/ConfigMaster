@@ -1,16 +1,13 @@
 package parameters
 
 import (
-	"config_master/internal/utils"
-	"encoding/json"
-	"log"
+	"fmt"
 	"math/rand"
 	"sync"
 )
 
 type SynchronizableSequenceParameter struct {
-	NamedParameter
-	Value float64
+	SimpleParameter[float64]
 	mutex sync.Mutex
 }
 
@@ -20,18 +17,19 @@ type RandomParameter struct {
 	max int
 }
 
-func (parameter *RandomParameter) Set(data []byte) error {
-	min, err := utils.ExtractFromJSON[float64](data, "min")
-	if err != nil {
-		return err
+func (parameter *RandomParameter) Set(data interface{}) error {
+	switch value := data.(type) {
+	case map[string]float64:
+		if val, ok := value["min"]; ok {
+			parameter.min = int(val)
+		}
+		if val, ok := value["max"]; ok {
+			parameter.max = int(val)
+		}
+		return nil
+	default:
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, value, value, map[string]float64{})
 	}
-	max, err := utils.ExtractFromJSON[float64](data, "max")
-	if err != nil {
-		return err
-	}
-	parameter.min = int(min)
-	parameter.max = int(max)
-	return nil
 }
 
 type ArithmeticSequenceParameter struct {
@@ -39,20 +37,19 @@ type ArithmeticSequenceParameter struct {
 	increment float64
 }
 
-func (parameter *ArithmeticSequenceParameter) Set(bytes []byte) error {
-	increment, err := utils.ExtractFromJSON[float64](bytes, "increment")
-	if err != nil {
-		return err
+func (parameter *ArithmeticSequenceParameter) Set(data interface{}) error {
+	switch value := data.(type) {
+	case map[string]float64:
+		if val, ok := value["increment"]; ok {
+			parameter.increment = val
+		}
+		if val, ok := value["value"]; ok {
+			parameter.value = val
+		}
+		return nil
+	default:
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, value, value, float64(0))
 	}
-	value, err := utils.ExtractFromJSON[float64](bytes, "value")
-	if err != nil {
-		log.Printf("could not set value for parameter %v leaving unchanged\n", parameter.name)
-	}
-	parameter.increment = increment
-	if err == nil {
-		parameter.Value = value
-	}
-	return nil
 }
 
 type GeometricSequenceParameter struct {
@@ -60,64 +57,61 @@ type GeometricSequenceParameter struct {
 	multiplier float64
 }
 
-func (parameter *GeometricSequenceParameter) Set(bytes []byte) error {
-	multiplier, err := utils.ExtractFromJSON[float64](bytes, "multiplier")
-	if err != nil {
-		return err
+func (parameter *GeometricSequenceParameter) Set(data interface{}) error {
+	switch value := data.(type) {
+	case map[string]float64:
+		if val, ok := value["multiplier"]; ok {
+			parameter.multiplier = val
+		}
+		if val, ok := value["value"]; ok {
+			parameter.value = val
+		}
+		return nil
+	default:
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, value, value, float64(0))
 	}
-	value, err := utils.ExtractFromJSON[float64](bytes, "value")
-	if err != nil {
-		log.Printf("could not set value for parameter %v leaving unchanged\n", parameter.name)
-	}
-	parameter.multiplier = multiplier
-	if err == nil {
-		parameter.Value = value
-	}
-	return nil
 }
 
-func (parameter *RandomParameter) GetAsJSON() ([]byte, error) {
-	return utils.GetAsJSON(parameter.name, rand.Intn(parameter.max-parameter.min)+parameter.min)
+func (parameter *RandomParameter) Value() interface{} {
+	return rand.Intn(parameter.max-parameter.min) + parameter.min
 }
 
 func NewRandomParameter(name string, min int, max int) Parameter {
 	return &RandomParameter{NamedParameter: NamedParameter{name: name}, min: min, max: max}
 }
 
-func (parameter *ArithmeticSequenceParameter) GetAsJSON() ([]byte, error) {
+func (parameter *ArithmeticSequenceParameter) Value() interface{} {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
 	defer parameter.update()
-	tmp := map[string]interface{}{parameter.name: parameter.Value}
-	return json.Marshal(tmp)
+	return parameter.SimpleParameter.Value()
 }
 
 func (parameter *ArithmeticSequenceParameter) update() {
-	parameter.Value += parameter.increment
+	parameter.value += parameter.increment
 }
 
 func NewArithmeticSequenceParameter(name string, value float64, increment float64) Parameter {
 	return &ArithmeticSequenceParameter{
-		SynchronizableSequenceParameter: SynchronizableSequenceParameter{NamedParameter: NamedParameter{name: name}, Value: value},
+		SynchronizableSequenceParameter: SynchronizableSequenceParameter{SimpleParameter: SimpleParameter[float64]{NamedParameter: NamedParameter{name: name}, value: value}},
 		increment:                       increment,
 	}
 }
 
-func (parameter *GeometricSequenceParameter) GetAsJSON() ([]byte, error) {
+func (parameter *GeometricSequenceParameter) Value() interface{} {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
 	defer parameter.update()
-	tmp := map[string]interface{}{parameter.name: parameter.Value}
-	return json.Marshal(tmp)
+	return parameter.SimpleParameter.Value()
 }
 
 func (parameter *GeometricSequenceParameter) update() {
-	parameter.Value *= parameter.multiplier
+	parameter.value *= parameter.multiplier
 }
 
 func NewGeometricSequenceParameter(name string, value float64, multiplier float64) Parameter {
 	return &GeometricSequenceParameter{
-		SynchronizableSequenceParameter: SynchronizableSequenceParameter{NamedParameter: NamedParameter{name: name}, Value: value},
+		SynchronizableSequenceParameter: SynchronizableSequenceParameter{SimpleParameter: SimpleParameter[float64]{NamedParameter: NamedParameter{name: name}, value: value}},
 		multiplier:                      multiplier,
 	}
 }
