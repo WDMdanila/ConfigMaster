@@ -23,11 +23,25 @@ func (parameter *RandomSelectionParameter) Value() interface{} {
 	return parameter.value[rand.Intn(len(parameter.value))]
 }
 
+func (parameter *RandomSelectionParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{parameter.name: map[string]interface{}{
+		"values":         parameter.value,
+		"parameter_type": "random selection"},
+	}
+}
+
 func (parameter *SequentialSelectionParameter) Set(data interface{}) error {
 	parameter.mutex.Lock()
 	defer parameter.mutex.Unlock()
 	parameter.index = 0
 	return parameter.SimpleParameter.Set(data)
+}
+
+func (parameter *SequentialSelectionParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{parameter.name: map[string]interface{}{
+		"values":         parameter.value,
+		"parameter_type": "sequential selection"},
+	}
 }
 
 func (parameter *SequentialSelectionParameter) Value() interface{} {

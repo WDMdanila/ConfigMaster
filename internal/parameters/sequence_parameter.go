@@ -97,6 +97,14 @@ func (parameter *RandomParameter) Value() interface{} {
 	return rand.Intn(parameter.max-parameter.min) + parameter.min
 }
 
+func (parameter *RandomParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{parameter.name: map[string]interface{}{
+		"min":            parameter.min,
+		"max":            parameter.max,
+		"parameter_type": "random"},
+	}
+}
+
 func NewRandomParameter(name string, min int, max int) Parameter {
 	return &RandomParameter{NamedParameter: NamedParameter{name: name}, min: min, max: max}
 }
@@ -110,6 +118,14 @@ func (parameter *ArithmeticSequenceParameter) Value() interface{} {
 
 func (parameter *ArithmeticSequenceParameter) update() {
 	parameter.value += parameter.increment
+}
+
+func (parameter *ArithmeticSequenceParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{parameter.name: map[string]interface{}{
+		"value":          parameter.value,
+		"increment":      parameter.increment,
+		"parameter_type": "arithmetic sequence"},
+	}
 }
 
 func NewArithmeticSequenceParameter(name string, value float64, increment float64) Parameter {
@@ -128,6 +144,14 @@ func (parameter *GeometricSequenceParameter) Value() interface{} {
 
 func (parameter *GeometricSequenceParameter) update() {
 	parameter.value *= parameter.multiplier
+}
+
+func (parameter *GeometricSequenceParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{parameter.name: map[string]interface{}{
+		"value":          parameter.value,
+		"multiplier":     parameter.multiplier,
+		"parameter_type": "geometric sequence"},
+	}
 }
 
 func NewGeometricSequenceParameter(name string, value float64, multiplier float64) Parameter {

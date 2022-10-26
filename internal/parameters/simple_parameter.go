@@ -31,6 +31,10 @@ func (parameter *SimpleParameter[T]) Set(data interface{}) error {
 	}
 }
 
+func (parameter *SimpleParameter[T]) Describe() map[string]interface{} {
+	return map[string]interface{}{parameter.name: parameter.value}
+}
+
 func NewSimpleParameter(name string, data interface{}) Parameter {
 	return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, value: data}
 }

@@ -23,6 +23,18 @@ func TestSimpleParameterStringValueGetValue(t *testing.T) {
 	}
 }
 
+func TestSimpleParameterStringValueDescribe(t *testing.T) {
+	var parameter Parameter
+	expected := map[string]string{"value": "value"}
+	parameter = NewSimpleParameter("value", "value")
+	res := parameter.Describe()
+	for key, val := range res {
+		if val.(string) != expected[key] {
+			t.Fatalf("parameter value %v does not equal to %v", res, expected)
+		}
+	}
+}
+
 func TestSimpleParameterStringValueSet(t *testing.T) {
 	var parameter Parameter
 	expected := "new value"

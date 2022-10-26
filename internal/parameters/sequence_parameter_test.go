@@ -2,6 +2,7 @@ package parameters
 
 import (
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
@@ -20,18 +21,13 @@ func TestArithmeticSequenceParameterValue(t *testing.T) {
 	}
 }
 
-func TestArithmeticFloatSequenceParameterValue(t *testing.T) {
+func TestArithmeticSequenceParameterDescribe(t *testing.T) {
+	expected := map[string]interface{}{"value": map[string]interface{}{"value": float64(1), "increment": float64(10), "parameter_type": "arithmetic sequence"}}
 	var parameter Parameter
-	expected := float64(0)
-	parameter = NewArithmeticSequenceParameter("value", 0, 0.1)
-	res := parameter.Value()
-	if res != expected {
-		t.Fatalf("parameter json %v does not equal to %v", res, expected)
-	}
-	expected = 0.1
-	res = parameter.Value()
-	if res != expected {
-		t.Fatalf("parameter json %v does not equal to %v", res, expected)
+	parameter = NewArithmeticSequenceParameter("value", 1, 10)
+	res := parameter.Describe()
+	if !reflect.DeepEqual(expected, res) {
+		t.Fatalf("expected: %v, got: %v", expected, res)
 	}
 }
 
@@ -81,6 +77,16 @@ func TestGeometricSequenceParameterValue(t *testing.T) {
 	res = parameter.Value()
 	if res.(float64) != expected {
 		t.Fatalf("parameter json %v does not equal to %v", res, expected)
+	}
+}
+
+func TestGeometricSequenceParameterDescribe(t *testing.T) {
+	expected := map[string]interface{}{"value": map[string]interface{}{"value": float64(1), "multiplier": float64(10), "parameter_type": "geometric sequence"}}
+	var parameter Parameter
+	parameter = NewGeometricSequenceParameter("value", 1, 10)
+	res := parameter.Describe()
+	if !reflect.DeepEqual(expected, res) {
+		t.Fatalf("expected: %v, got: %v", expected, res)
 	}
 }
 

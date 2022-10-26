@@ -2,6 +2,7 @@ package parameters
 
 import (
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
@@ -37,6 +38,30 @@ func TestSequentialSelectionParameterValue(t *testing.T) {
 	res = parameter.Value()
 	if res != expected {
 		t.Fatalf("parameter json %v does not equal to %v", res, expected)
+	}
+}
+
+func TestSequentialSelectionParameterDescribe(t *testing.T) {
+	expected := map[string]interface{}{"value": map[string]interface{}{"values": []interface{}{1, 2, 3}, "parameter_type": "sequential selection"}}
+	var parameter Parameter
+	values := make([]interface{}, 0)
+	values = append(values, 1, 2, 3)
+	parameter = NewSequentialSelectionParameter("value", values)
+	res := parameter.Describe()
+	if !reflect.DeepEqual(expected, res) {
+		t.Fatal()
+	}
+}
+
+func TestRandomSelectionParameterDescribe(t *testing.T) {
+	expected := map[string]interface{}{"value": map[string]interface{}{"values": []interface{}{1, 2, 3}, "parameter_type": "random selection"}}
+	var parameter Parameter
+	values := make([]interface{}, 0)
+	values = append(values, 1, 2, 3)
+	parameter = NewRandomSelectionParameter("value", values)
+	res := parameter.Describe()
+	if !reflect.DeepEqual(expected, res) {
+		t.Fatal()
 	}
 }
 
