@@ -13,17 +13,24 @@ type ParameterProcessor struct {
 	parameters.Parameter
 }
 
-func (handler *ParameterProcessor) Process(request *http.Request) []byte {
-	switch request.Method {
-	case http.MethodGet:
-		return parseResponse("value", handler.Value())
-	case http.MethodPut:
-		return handler.handlePUT(request)
+var requestMethodHandlerFunc = map[string]func(*http.Request, *ParameterProcessor) []byte{
+	"":             handleGET,
+	http.MethodGet: handleGET,
+	http.MethodPut: handlePUT,
+}
+
+func (processor *ParameterProcessor) Process(request *http.Request) []byte {
+	if val, ok := requestMethodHandlerFunc[request.Method]; ok {
+		return val(request, processor)
 	}
 	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }
 
-func (handler *ParameterProcessor) handlePUT(request *http.Request) []byte {
+func handleGET(request *http.Request, processor *ParameterProcessor) []byte {
+	return parseResponse("value", processor.Value())
+}
+
+func handlePUT(request *http.Request, processor *ParameterProcessor) []byte {
 	data, err := io.ReadAll(request.Body)
 	if err != nil {
 		return parseResponse("error", err.Error())
@@ -32,7 +39,7 @@ func (handler *ParameterProcessor) handlePUT(request *http.Request) []byte {
 	if err != nil {
 		return parseResponse("error", err.Error())
 	}
-	err = handler.Set(value)
+	err = processor.Set(value)
 	if err != nil {
 		return parseResponse("error", err.Error())
 	}
@@ -46,5 +53,5 @@ func parseResponse(name string, value interface{}) []byte {
 }
 
 func NewParameterHandler(path string, parameter parameters.Parameter) RequestHandler {
-	return &DefaultRequestHandler{path: path, Processor: &ParameterProcessor{parameter}}
+	return &DefaultRequestHandler{ReachableRequestHandler: ReachableRequestHandler{path: path}, Processor: &ParameterProcessor{parameter}}
 }

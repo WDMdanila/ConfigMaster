@@ -6,7 +6,7 @@ import (
 )
 
 func TestConfigServer(t *testing.T) {
-	server := NewConfigServer(":3333", []RequestHandler{&DefaultRequestHandler{path: "/"}})
+	server := NewConfigServer(":3333", []RequestHandler{NewParameterHandler("/", nil)})
 	go server.ListenAndServe()
 	server.Shutdown()
 }

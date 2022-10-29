@@ -5,8 +5,16 @@ import (
 	"net/http"
 )
 
-type DefaultRequestHandler struct {
+type ReachableRequestHandler struct {
 	path string
+}
+
+func (handler *ReachableRequestHandler) Path() string {
+	return handler.path
+}
+
+type DefaultRequestHandler struct {
+	ReachableRequestHandler
 	Processor
 }
 
@@ -20,8 +28,4 @@ func (handler *DefaultRequestHandler) ServeHTTP(writer http.ResponseWriter, requ
 		return
 	}
 	log.Printf("responded to: %v with: %v\n", request.RemoteAddr, string(result))
-}
-
-func (handler *DefaultRequestHandler) Path() string {
-	return handler.path
 }

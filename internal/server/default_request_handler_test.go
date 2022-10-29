@@ -8,7 +8,7 @@ import (
 )
 
 func TestDefaultRequestHandler(t *testing.T) {
-	handler := DefaultRequestHandler{path: "/", Processor: &ParameterProcessor{Parameter: parameters.NewSimpleParameter("test", 1)}}
+	handler := NewParameterHandler("/", &ParameterProcessor{Parameter: parameters.NewSimpleParameter("test", 1)})
 	var expected = 200
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
