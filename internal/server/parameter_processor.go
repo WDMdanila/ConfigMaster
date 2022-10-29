@@ -26,7 +26,7 @@ func (processor *ParameterProcessor) Process(request *http.Request) []byte {
 	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }
 
-func handleGET(request *http.Request, processor *ParameterProcessor) []byte {
+func handleGET(_ *http.Request, processor *ParameterProcessor) []byte {
 	return parseResponse("value", processor.Value())
 }
 
