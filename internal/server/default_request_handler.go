@@ -5,14 +5,6 @@ import (
 	"net/http"
 )
 
-type ReachableRequestHandler struct {
-	path string
-}
-
-func (handler *ReachableRequestHandler) Path() string {
-	return handler.path
-}
-
 type DefaultRequestHandler struct {
 	ReachableRequestHandler
 	Processor
