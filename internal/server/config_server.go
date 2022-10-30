@@ -10,17 +10,17 @@ type ConfigServer struct {
 	http.Server
 }
 
-func (configServer *ConfigServer) Shutdown() {
+func (s *ConfigServer) Shutdown() {
 	log.Printf("closing server gracefuly\n")
-	err := configServer.Server.Shutdown(context.Background())
+	err := s.Server.Shutdown(context.Background())
 	if err != nil {
 		log.Panicf("could not shutdown gracefuly, error: %v", err)
 	}
 }
 
-func (configServer *ConfigServer) ListenAndServe() {
-	log.Printf("Listening on %v\n", configServer.Addr)
-	err := configServer.Server.ListenAndServe()
+func (s *ConfigServer) ListenAndServe() {
+	log.Printf("Listening on %v\n", s.Addr)
+	err := s.Server.ListenAndServe()
 	if err == http.ErrServerClosed {
 		log.Printf("closed server gracefuly\n")
 	} else if err != nil {

@@ -13,26 +13,26 @@ type SimpleParameter[T any] struct {
 	value T
 }
 
-func (parameter *NamedParameter) Name() string {
-	return parameter.name
+func (p *NamedParameter) Name() string {
+	return p.name
 }
 
-func (parameter *SimpleParameter[T]) Value() interface{} {
-	return parameter.value
+func (p *SimpleParameter[T]) Value() interface{} {
+	return p.value
 }
 
-func (parameter *SimpleParameter[T]) Set(data interface{}) error {
+func (p *SimpleParameter[T]) Set(data interface{}) error {
 	switch value := data.(type) {
 	case T:
-		parameter.value = value
+		p.value = value
 		return nil
 	default:
-		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, value, value, parameter.value)
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", p.name, value, value, p.value)
 	}
 }
 
-func (parameter *SimpleParameter[T]) Describe() map[string]interface{} {
-	return map[string]interface{}{parameter.name: parameter.value}
+func (p *SimpleParameter[T]) Describe() map[string]interface{} {
+	return map[string]interface{}{p.name: p.value}
 }
 
 func NewSimpleParameter(name string, data interface{}) Parameter {

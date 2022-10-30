@@ -17,15 +17,15 @@ type JSONParameterReader struct {
 	strictTypes bool
 }
 
-func (parameterReader *JSONParameterReader) Read() map[string]Parameter {
-	data := parseJSONFile(parameterReader.filePath)
-	return parameterReader.fromParsedJSON(data)
+func (r *JSONParameterReader) Read() map[string]Parameter {
+	data := parseJSONFile(r.filePath)
+	return r.fromParsedJSON(data)
 }
 
-func (parameterReader *JSONParameterReader) fromParsedJSON(data map[string]interface{}) map[string]Parameter {
+func (r *JSONParameterReader) fromParsedJSON(data map[string]interface{}) map[string]Parameter {
 	res := map[string]Parameter{}
 	for paramName, paramData := range data {
-		parameter := parseParameter(paramName, paramData, parameterReader.strictTypes)
+		parameter := parseParameter(paramName, paramData, r.strictTypes)
 		res[parameter.Name()] = parameter
 	}
 	return res

@@ -3,7 +3,6 @@ package server
 import (
 	"config_master/internal/parameters"
 	"config_master/internal/utils"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,9 +18,9 @@ var requestMethodHandlerFunc = map[string]func(*http.Request, *ParameterProcesso
 	http.MethodPut: handlePUT,
 }
 
-func (processor *ParameterProcessor) Process(request *http.Request) []byte {
+func (p *ParameterProcessor) Process(request *http.Request) []byte {
 	if val, ok := requestMethodHandlerFunc[request.Method]; ok {
-		return val(request, processor)
+		return val(request, p)
 	}
 	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }
@@ -47,8 +46,7 @@ func handlePUT(request *http.Request, processor *ParameterProcessor) []byte {
 }
 
 func parseResponse(name string, value interface{}) []byte {
-	val := map[string]interface{}{name: value}
-	res, _ := json.Marshal(val)
+	res, _ := utils.GetAsJSON(name, value)
 	return res
 }
 

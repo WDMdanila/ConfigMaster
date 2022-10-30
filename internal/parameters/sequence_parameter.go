@@ -18,18 +18,18 @@ type RandomParameter struct {
 	max int
 }
 
-func (parameter *RandomParameter) Set(data interface{}) error {
+func (p *RandomParameter) Set(data interface{}) error {
 	switch value := data.(type) {
 	case map[string]float64:
 		if val, ok := value["min"]; ok {
-			parameter.min = int(val)
+			p.min = int(val)
 		}
 		if val, ok := value["max"]; ok {
-			parameter.max = int(val)
+			p.max = int(val)
 		}
 		return nil
 	default:
-		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, value, value, map[string]float64{})
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", p.name, value, value, map[string]float64{})
 	}
 }
 
@@ -38,28 +38,28 @@ type ArithmeticSequenceParameter struct {
 	increment float64
 }
 
-func (parameter *ArithmeticSequenceParameter) Set(data interface{}) error {
+func (p *ArithmeticSequenceParameter) Set(data interface{}) error {
 	switch fieldData := data.(type) {
 	case map[string]float64:
 		if val, ok := fieldData["increment"]; ok {
-			parameter.increment = val
+			p.increment = val
 		}
 		if val, ok := fieldData["value"]; ok {
-			parameter.value = val
+			p.value = val
 		}
 		return nil
 	case map[string]interface{}:
 		val, err := utils.ParseFloat(fieldData, "increment")
 		if err == nil {
-			parameter.increment = val
+			p.increment = val
 		}
 		val, err = utils.ParseFloat(fieldData, "value")
 		if err == nil {
-			parameter.value = val
+			p.value = val
 		}
 		return nil
 	default:
-		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, fieldData, fieldData, float64(0))
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", p.name, fieldData, fieldData, float64(0))
 	}
 }
 
@@ -68,39 +68,39 @@ type GeometricSequenceParameter struct {
 	multiplier float64
 }
 
-func (parameter *GeometricSequenceParameter) Set(data interface{}) error {
+func (p *GeometricSequenceParameter) Set(data interface{}) error {
 	switch fieldData := data.(type) {
 	case map[string]float64:
 		if val, ok := fieldData["multiplier"]; ok {
-			parameter.multiplier = val
+			p.multiplier = val
 		}
 		if val, ok := fieldData["value"]; ok {
-			parameter.value = val
+			p.value = val
 		}
 		return nil
 	case map[string]interface{}:
 		val, err := utils.ParseFloat(fieldData, "multiplier")
 		if err == nil {
-			parameter.multiplier = val
+			p.multiplier = val
 		}
 		val, err = utils.ParseFloat(fieldData, "value")
 		if err == nil {
-			parameter.value = val
+			p.value = val
 		}
 		return nil
 	default:
-		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", parameter.name, fieldData, fieldData, float64(0))
+		return fmt.Errorf("failed to set %v to %v due to type mismatch (got %T, expected %T)", p.name, fieldData, fieldData, float64(0))
 	}
 }
 
-func (parameter *RandomParameter) Value() interface{} {
-	return rand.Intn(parameter.max-parameter.min) + parameter.min
+func (p *RandomParameter) Value() interface{} {
+	return rand.Intn(p.max-p.min) + p.min
 }
 
-func (parameter *RandomParameter) Describe() map[string]interface{} {
-	return map[string]interface{}{parameter.name: map[string]interface{}{
-		"min":            parameter.min,
-		"max":            parameter.max,
+func (p *RandomParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{p.name: map[string]interface{}{
+		"min":            p.min,
+		"max":            p.max,
 		"parameter_type": "random"},
 	}
 }
@@ -109,21 +109,21 @@ func NewRandomParameter(name string, min int, max int) Parameter {
 	return &RandomParameter{NamedParameter: NamedParameter{name: name}, min: min, max: max}
 }
 
-func (parameter *ArithmeticSequenceParameter) Value() interface{} {
-	parameter.mutex.Lock()
-	defer parameter.mutex.Unlock()
-	defer parameter.update()
-	return parameter.SimpleParameter.Value()
+func (p *ArithmeticSequenceParameter) Value() interface{} {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	defer p.update()
+	return p.SimpleParameter.Value()
 }
 
-func (parameter *ArithmeticSequenceParameter) update() {
-	parameter.value += parameter.increment
+func (p *ArithmeticSequenceParameter) update() {
+	p.value += p.increment
 }
 
-func (parameter *ArithmeticSequenceParameter) Describe() map[string]interface{} {
-	return map[string]interface{}{parameter.name: map[string]interface{}{
-		"value":          parameter.value,
-		"increment":      parameter.increment,
+func (p *ArithmeticSequenceParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{p.name: map[string]interface{}{
+		"value":          p.value,
+		"increment":      p.increment,
 		"parameter_type": "arithmetic sequence"},
 	}
 }
@@ -135,21 +135,21 @@ func NewArithmeticSequenceParameter(name string, value float64, increment float6
 	}
 }
 
-func (parameter *GeometricSequenceParameter) Value() interface{} {
-	parameter.mutex.Lock()
-	defer parameter.mutex.Unlock()
-	defer parameter.update()
-	return parameter.SimpleParameter.Value()
+func (p *GeometricSequenceParameter) Value() interface{} {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	defer p.update()
+	return p.SimpleParameter.Value()
 }
 
-func (parameter *GeometricSequenceParameter) update() {
-	parameter.value *= parameter.multiplier
+func (p *GeometricSequenceParameter) update() {
+	p.value *= p.multiplier
 }
 
-func (parameter *GeometricSequenceParameter) Describe() map[string]interface{} {
-	return map[string]interface{}{parameter.name: map[string]interface{}{
-		"value":          parameter.value,
-		"multiplier":     parameter.multiplier,
+func (p *GeometricSequenceParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{p.name: map[string]interface{}{
+		"value":          p.value,
+		"multiplier":     p.multiplier,
 		"parameter_type": "geometric sequence"},
 	}
 }

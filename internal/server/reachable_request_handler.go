@@ -4,6 +4,6 @@ type ReachableRequestHandler struct {
 	path string
 }
 
-func (handler *ReachableRequestHandler) Path() string {
-	return handler.path
+func (h *ReachableRequestHandler) Path() string {
+	return h.path
 }

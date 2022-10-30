@@ -19,40 +19,40 @@ type SequentialSelectionParameter struct {
 	mutex sync.Mutex
 }
 
-func (parameter *RandomSelectionParameter) Value() interface{} {
-	return parameter.value[rand.Intn(len(parameter.value))]
+func (p *RandomSelectionParameter) Value() interface{} {
+	return p.value[rand.Intn(len(p.value))]
 }
 
-func (parameter *RandomSelectionParameter) Describe() map[string]interface{} {
-	return map[string]interface{}{parameter.name: map[string]interface{}{
-		"values":         parameter.value,
+func (p *RandomSelectionParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{p.name: map[string]interface{}{
+		"values":         p.value,
 		"parameter_type": "random selection"},
 	}
 }
 
-func (parameter *SequentialSelectionParameter) Set(data interface{}) error {
-	parameter.mutex.Lock()
-	defer parameter.mutex.Unlock()
-	parameter.index = 0
-	return parameter.SimpleParameter.Set(data)
+func (p *SequentialSelectionParameter) Set(data interface{}) error {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	p.index = 0
+	return p.SimpleParameter.Set(data)
 }
 
-func (parameter *SequentialSelectionParameter) Describe() map[string]interface{} {
-	return map[string]interface{}{parameter.name: map[string]interface{}{
-		"values":         parameter.value,
+func (p *SequentialSelectionParameter) Describe() map[string]interface{} {
+	return map[string]interface{}{p.name: map[string]interface{}{
+		"values":         p.value,
 		"parameter_type": "sequential selection"},
 	}
 }
 
-func (parameter *SequentialSelectionParameter) Value() interface{} {
-	parameter.mutex.Lock()
-	defer parameter.mutex.Unlock()
-	defer parameter.updateIndex()
-	return parameter.value[parameter.index]
+func (p *SequentialSelectionParameter) Value() interface{} {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	defer p.updateIndex()
+	return p.value[p.index]
 }
 
-func (parameter *SequentialSelectionParameter) updateIndex() {
-	parameter.index = (parameter.index + 1) % len(parameter.value)
+func (p *SequentialSelectionParameter) updateIndex() {
+	p.index = (p.index + 1) % len(p.value)
 }
 
 func NewRandomSelectionParameter(name string, options []interface{}) Parameter {
