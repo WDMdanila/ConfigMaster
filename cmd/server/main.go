@@ -12,20 +12,28 @@ import (
 
 func createRequestHandlers(configDirectory string, strictTypes bool) []server.RequestHandler {
 	var handlers []server.RequestHandler
+	var nestedHandlers []server.RequestHandler
 	configFiles, err := utils.FindFilesWithExtInDirectory(configDirectory, "json")
 	if err != nil {
 		panic(err)
 	}
 	for _, configFile := range configFiles {
 		var configHttpPath string
+		processors := make([]server.RequestHandler, 0)
 		configFile, configHttpPath = utils.ExtractFileNameAndPath(configFile)
 		paramReader := parameters.NewJSONParameterReader(configFile, strictTypes)
 		parametersMap := paramReader.Read()
 		for key, value := range parametersMap {
 			handlerPath := fmt.Sprintf("/%v/%v", configHttpPath, key)
-			handlers = append(handlers, server.NewParameterHandler(handlerPath, value))
+			handler := server.NewParameterHandler(handlerPath, value)
+			processors = append(processors, handler)
+			handlers = append(handlers, handler)
 		}
+		nestedHandler := server.NewNestedRequestHandler("/"+configHttpPath, processors)
+		handlers = append(handlers, nestedHandler)
+		nestedHandlers = append(nestedHandlers, nestedHandler)
 	}
+	handlers = append(handlers, server.NewNestedRequestHandler("/", nestedHandlers))
 	return handlers
 }
 

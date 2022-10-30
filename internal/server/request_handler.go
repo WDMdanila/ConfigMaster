@@ -7,8 +7,5 @@ import (
 type RequestHandler interface {
 	http.Handler
 	Path() string
-}
-
-type Processor interface {
-	Process(*http.Request) []byte
+	Process(*http.Request) map[string]interface{}
 }
