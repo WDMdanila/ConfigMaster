@@ -25,7 +25,7 @@ func TestNewNestedRequestHandler(t *testing.T) {
 
 func TestNestedRequestHandlerServeHTTP(t *testing.T) {
 	expected := []byte(`{"/handler_1":{"param_name":1}}`)
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/handler_1", nil)
 	w := httptest.NewRecorder()
 	handler := NewNestedRequestHandler("/handler_1", nil)
 	handler2 := NewParameterHandler("/handler_1/handler_2", parameters.NewSimpleParameter("param_name", 1))
@@ -39,5 +39,19 @@ func TestNestedRequestHandlerServeHTTP(t *testing.T) {
 	}
 	if !bytes.Equal(data, expected) {
 		t.Fatalf(`expected {"value":1} got %v`, string(data))
+	}
+}
+
+func TestNestedRequestHandlerServeHTTP404(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/qwe", nil)
+	w := httptest.NewRecorder()
+	handler := NewNestedRequestHandler("/", nil)
+	handler2 := NewParameterHandler("/handler_2", parameters.NewSimpleParameter("param_name", 1))
+	handler.AddProcessor(handler2)
+	handler.ServeHTTP(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+	if res.StatusCode != http.StatusNotFound {
+		t.Fatal("Expected 404 not found")
 	}
 }
