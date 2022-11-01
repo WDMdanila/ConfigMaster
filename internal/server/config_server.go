@@ -28,11 +28,13 @@ func (s *ConfigServer) ListenAndServe() {
 	}
 }
 
-func NewConfigServer(address string, handlers []RequestHandler) *ConfigServer {
-	m := http.NewServeMux()
-	configServer := &ConfigServer{http.Server{Addr: address, Handler: m}}
+func NewConfigServer(address string, handlers []RequestHandler, multiplexer *http.ServeMux) *ConfigServer {
+	if multiplexer == nil {
+		multiplexer = http.NewServeMux()
+	}
+	configServer := &ConfigServer{http.Server{Addr: address, Handler: multiplexer}}
 	for index, handler := range handlers {
-		m.Handle(handler.Path(), handler)
+		multiplexer.Handle(handler.Path(), handler)
 		log.Printf("registered %v handler under: %v", index+1, handler.Path())
 	}
 	return configServer

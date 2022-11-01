@@ -7,7 +7,7 @@ import (
 
 func TestFindFilesWithExtInDirectory(t *testing.T) {
 	expected := 2
-	modFile, err := FindFilesWithExtInDirectory("./", "txt")
+	modFile, err := FindFilesWithExtRecursively("./", "txt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -18,7 +18,7 @@ func TestFindFilesWithExtInDirectory(t *testing.T) {
 }
 
 func TestFindFilesWithExtInNonExistentDirectory(t *testing.T) {
-	_, err := FindFilesWithExtInDirectory("./does_not_exist", "txt")
+	_, err := FindFilesWithExtRecursively("./does_not_exist", "txt")
 	if err == nil {
 		t.Fatal("expected error")
 	}

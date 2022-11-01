@@ -6,14 +6,15 @@ import (
 	"config_master/internal/utils"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 )
 
-func createRequestHandlers(configDirectory string, strictTypes bool) []server.RequestHandler {
+func createRequestHandlers(configDirectory string, strictTypes bool, multiplexer *http.ServeMux) []server.RequestHandler {
 	var handlers []server.RequestHandler
 	var nestedHandlers []server.RequestHandler
-	configFiles, err := utils.FindFilesWithExtInDirectory(configDirectory, "json")
+	configFiles, err := utils.FindFilesWithExtRecursively(configDirectory, "json")
 	if err != nil {
 		panic(err)
 	}
@@ -29,11 +30,11 @@ func createRequestHandlers(configDirectory string, strictTypes bool) []server.Re
 			processors = append(processors, handler)
 			handlers = append(handlers, handler)
 		}
-		nestedHandler := server.NewNestedRequestHandler("/"+configHttpPath, processors)
+		nestedHandler := server.NewNestedRequestHandler("/"+configHttpPath, processors, multiplexer)
 		handlers = append(handlers, nestedHandler)
 		nestedHandlers = append(nestedHandlers, nestedHandler)
 	}
-	handlers = append(handlers, server.NewNestedRequestHandler("/", nestedHandlers))
+	handlers = append(handlers, server.NewNestedRequestHandler("/", nestedHandlers, multiplexer))
 	return handlers
 }
 
@@ -49,8 +50,9 @@ func parseArgs() (string, string, bool) {
 
 func main() {
 	address, configDir, strictTypes := parseArgs()
-	handlers := createRequestHandlers(configDir, strictTypes)
-	configServer := server.NewConfigServer(address, handlers)
+	multiplexer := http.NewServeMux()
+	handlers := createRequestHandlers(configDir, strictTypes, multiplexer)
+	configServer := server.NewConfigServer(address, handlers, multiplexer)
 	defer configServer.Shutdown()
 	go configServer.ListenAndServe()
 	stop := make(chan os.Signal, 1)
