@@ -150,6 +150,16 @@ func TestRandomParameterValue(t *testing.T) {
 	}
 }
 
+func TestRandomParameterDescribe(t *testing.T) {
+	expected := map[string]interface{}{"value": map[string]interface{}{"min": 1, "max": 10, "parameter_type": "random"}}
+	var parameter Parameter
+	parameter = NewRandomParameter("value", 1, 10)
+	res := parameter.Describe()
+	if !reflect.DeepEqual(expected, res) {
+		t.Fatalf("expected: %v, got: %v", expected, res)
+	}
+}
+
 func TestRandomParameterSet(t *testing.T) {
 	var parameter Parameter
 	expected := 84
