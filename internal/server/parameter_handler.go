@@ -5,7 +5,6 @@ import (
 	"config_master/internal/utils"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -17,12 +16,7 @@ type ParameterHandler struct {
 func (p *ParameterHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	result := p.GetResponse(request)
-	_, err := writer.Write(result)
-	if err != nil {
-		log.Printf("could not respond to: %v, error: %v", request.RemoteAddr, err)
-		return
-	}
-	log.Printf("responded to: %v with: %v\n", request.RemoteAddr, string(result))
+	_, _ = writer.Write(result)
 }
 
 func (p *ParameterHandler) Process(_ *http.Request) map[string]interface{} {

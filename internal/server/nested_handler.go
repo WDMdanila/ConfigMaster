@@ -19,12 +19,7 @@ type NestedRequestHandler struct {
 func (h *NestedRequestHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	data := h.GetResponse(request)
-	_, err := writer.Write(data)
-	if err != nil {
-		log.Printf("could not respond to: %v, error: %v", request.RemoteAddr, err)
-		return
-	}
-	log.Printf("responded to: %v with: %v\n", request.RemoteAddr, string(data))
+	_, _ = writer.Write(data)
 }
 
 func (h *NestedRequestHandler) GetResponse(request *http.Request) []byte {
