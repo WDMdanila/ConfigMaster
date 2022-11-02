@@ -12,7 +12,7 @@ import (
 
 type NestedRequestHandler struct {
 	ReachableRequestHandler
-	processors  []RequestHandler
+	handlers    []RequestHandler
 	multiplexer *http.ServeMux
 }
 
@@ -25,7 +25,7 @@ func (h *NestedRequestHandler) ServeHTTP(writer http.ResponseWriter, request *ht
 func (h *NestedRequestHandler) GetResponse(request *http.Request) []byte {
 	switch request.Method {
 	case http.MethodGet:
-		result := h.Process(request)
+		result := h.Describe()
 		data, _ := json.Marshal(result)
 		return data
 	case http.MethodPut:
@@ -42,13 +42,13 @@ func (h *NestedRequestHandler) GetResponse(request *http.Request) []byte {
 			case map[string]interface{}:
 				parameter := parameters.FromJSON(key, v, false)
 				paramHandler := NewParameterHandler(h.Path()+"/"+key, parameter)
-				h.processors = append(h.processors, paramHandler)
+				h.handlers = append(h.handlers, paramHandler)
 				h.multiplexer.Handle(paramHandler.Path(), paramHandler)
 				log.Printf("registered parameter %v on %v", key, paramHandler.Path())
 			default:
 				parameter := parameters.FromJSON(key, value, false)
 				paramHandler := NewParameterHandler(h.Path()+"/"+key, parameter)
-				h.processors = append(h.processors, paramHandler)
+				h.handlers = append(h.handlers, paramHandler)
 				h.multiplexer.Handle(paramHandler.Path(), paramHandler)
 				log.Printf("registered parameter %v on %v", key, paramHandler.Path())
 			}
@@ -59,10 +59,10 @@ func (h *NestedRequestHandler) GetResponse(request *http.Request) []byte {
 	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }
 
-func (h *NestedRequestHandler) Process(request *http.Request) map[string]interface{} {
+func (h *NestedRequestHandler) Describe() map[string]interface{} {
 	tmp := map[string]interface{}{}
-	for _, processor := range h.processors {
-		for key, val := range processor.Process(request) {
+	for _, processor := range h.handlers {
+		for key, val := range processor.Describe() {
 			tmp[key] = val
 		}
 	}
@@ -71,9 +71,9 @@ func (h *NestedRequestHandler) Process(request *http.Request) map[string]interfa
 }
 
 func (h *NestedRequestHandler) AddProcessor(processor RequestHandler) {
-	h.processors = append(h.processors, processor)
+	h.handlers = append(h.handlers, processor)
 }
 
 func NewNestedRequestHandler(path string, processors []RequestHandler, multiplexer *http.ServeMux) *NestedRequestHandler {
-	return &NestedRequestHandler{ReachableRequestHandler: ReachableRequestHandler{path: path}, processors: processors, multiplexer: multiplexer}
+	return &NestedRequestHandler{ReachableRequestHandler: ReachableRequestHandler{path: path}, handlers: processors, multiplexer: multiplexer}
 }

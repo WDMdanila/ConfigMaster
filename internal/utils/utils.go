@@ -12,7 +12,6 @@ import (
 func FindFilesWithExtRecursively(dirPath string, ext string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
-		log.Printf("%v\n", path)
 		if err == nil && !info.IsDir() && filepath.Ext(info.Name()) == "."+ext {
 			files = append(files, path)
 		}

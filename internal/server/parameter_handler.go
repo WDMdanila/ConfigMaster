@@ -19,8 +19,8 @@ func (p *ParameterHandler) ServeHTTP(writer http.ResponseWriter, request *http.R
 	_, _ = writer.Write(result)
 }
 
-func (p *ParameterHandler) Process(_ *http.Request) map[string]interface{} {
-	return p.Describe()
+func (p *ParameterHandler) Describe() map[string]interface{} {
+	return p.Parameter.Describe()
 }
 
 var requestMethodHandlerFunc = map[string]func(*http.Request, *ParameterHandler) []byte{

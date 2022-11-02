@@ -15,7 +15,7 @@ func TestNewNestedRequestHandler(t *testing.T) {
 	handler1 := NewNestedRequestHandler("/handler_1", nil, nil)
 	handler2 := NewParameterHandler("/handler_1/handler_2", parameters.NewSimpleParameter("param_name", 1))
 	handler1.AddProcessor(handler2)
-	res := handler1.Process(nil)
+	res := handler1.Describe()
 	if len(res) != 1 {
 		t.Fatal()
 	}
