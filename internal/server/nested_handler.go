@@ -17,12 +17,6 @@ type NestedRequestHandler struct {
 }
 
 func (h *NestedRequestHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	log.Printf("got %v request to: %v\n", request.Method, request.RequestURI)
-	if request.URL.Path != h.Path() {
-		log.Printf("responded to: %v with: 404 not found\n", request.RemoteAddr)
-		http.NotFound(writer, request)
-		return
-	}
 	writer.Header().Set("Content-Type", "application/json")
 	data := h.GetResponse(request)
 	_, err := writer.Write(data)

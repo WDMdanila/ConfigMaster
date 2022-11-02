@@ -34,7 +34,7 @@ func NewConfigServer(address string, handlers []RequestHandler, multiplexer *htt
 	}
 	configServer := &ConfigServer{http.Server{Addr: address, Handler: multiplexer}}
 	for index, handler := range handlers {
-		multiplexer.Handle(handler.Path(), handler)
+		multiplexer.Handle(handler.Path(), NewRecoveryHandler(handler))
 		log.Printf("registered %v handler under: %v", index+1, handler.Path())
 	}
 	return configServer

@@ -15,7 +15,6 @@ type ParameterHandler struct {
 }
 
 func (p *ParameterHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	log.Printf("got %v request to: %v\n", request.Method, request.RequestURI)
 	writer.Header().Set("Content-Type", "application/json")
 	result := p.GetResponse(request)
 	_, err := writer.Write(result)
