@@ -29,13 +29,12 @@ func (s *ConfigServer) ListenAndServe() {
 }
 
 func NewConfigServer(address string, handlers []RequestHandler, multiplexer Multiplexer) *ConfigServer {
-	var wrapper Multiplexer
 	if multiplexer == nil {
-		wrapper = NewSafeCountingMultiplexer()
+		multiplexer = NewSafeCountingMultiplexer()
 	}
-	configServer := &ConfigServer{http.Server{Addr: address, Handler: wrapper}}
+	configServer := &ConfigServer{http.Server{Addr: address, Handler: multiplexer}}
 	for _, handler := range handlers {
-		wrapper.Handle(handler.Path(), handler)
+		multiplexer.Handle(handler.Path(), handler)
 	}
 	return configServer
 }
