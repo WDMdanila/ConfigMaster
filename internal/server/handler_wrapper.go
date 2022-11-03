@@ -27,7 +27,7 @@ type HandlerWrapper struct {
 
 func (h *HandlerWrapper) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	log.Printf("got %v request to: %v\n", request.Method, request.RequestURI)
-	loggingWriter := &LoggingResponseWriter{ResponseWriter: writer, RemoteAddr: request.RemoteAddr}
+	loggingWriter := NewLoggingResponseWriter(writer, request.RemoteAddr)
 	defer handleError(loggingWriter)()
 	if request.URL.Path != h.handler.Path() {
 		http.NotFound(loggingWriter, request)
@@ -48,4 +48,8 @@ func handleError(writer http.ResponseWriter) func() {
 
 func NewRecoveryHandler(handler RequestHandler) *HandlerWrapper {
 	return &HandlerWrapper{handler: handler}
+}
+
+func NewLoggingResponseWriter(writer http.ResponseWriter, remoteAddr string) *LoggingResponseWriter {
+	return &LoggingResponseWriter{ResponseWriter: writer, RemoteAddr: remoteAddr}
 }

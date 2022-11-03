@@ -46,7 +46,7 @@ func (h *NestedRequestHandler) GetResponse(request *http.Request) []byte {
 				h.multiplexer.Handle(paramHandler.Path(), paramHandler)
 				log.Printf("registered parameter %v on %v", key, paramHandler.Path())
 			default:
-				parameter := parameters.FromJSON(key, value, false)
+				parameter := parameters.NewSimpleParameter(key, v)
 				paramHandler := NewParameterHandler(h.Path()+"/"+key, parameter)
 				h.handlers = append(h.handlers, paramHandler)
 				h.multiplexer.Handle(paramHandler.Path(), paramHandler)
