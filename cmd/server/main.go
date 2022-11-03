@@ -6,12 +6,11 @@ import (
 	"config_master/internal/utils"
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 )
 
-func createRequestHandlers(configDirectory string, strictTypes bool, multiplexer *http.ServeMux) []server.RequestHandler {
+func createRequestHandlers(configDirectory string, strictTypes bool, multiplexer server.Multiplexer) []server.RequestHandler {
 	var handlers []server.RequestHandler
 	var nestedHandlers []server.RequestHandler
 	configFiles, err := utils.FindFilesWithExtRecursively(configDirectory, "json")
@@ -50,7 +49,7 @@ func parseArgs() (string, string, bool) {
 
 func main() {
 	address, configDir, strictTypes := parseArgs()
-	multiplexer := http.NewServeMux()
+	multiplexer := server.NewSafeCountingMultiplexer()
 	handlers := createRequestHandlers(configDir, strictTypes, multiplexer)
 	configServer := server.NewConfigServer(address, handlers, multiplexer)
 	defer configServer.Shutdown()

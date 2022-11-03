@@ -28,14 +28,14 @@ func (s *ConfigServer) ListenAndServe() {
 	}
 }
 
-func NewConfigServer(address string, handlers []RequestHandler, multiplexer *http.ServeMux) *ConfigServer {
+func NewConfigServer(address string, handlers []RequestHandler, multiplexer Multiplexer) *ConfigServer {
+	var wrapper Multiplexer
 	if multiplexer == nil {
-		multiplexer = http.NewServeMux()
+		wrapper = NewSafeCountingMultiplexer()
 	}
-	configServer := &ConfigServer{http.Server{Addr: address, Handler: multiplexer}}
-	for index, handler := range handlers {
-		multiplexer.Handle(handler.Path(), NewRecoveryHandler(handler))
-		log.Printf("registered %v handler under: %v", index+1, handler.Path())
+	configServer := &ConfigServer{http.Server{Addr: address, Handler: wrapper}}
+	for _, handler := range handlers {
+		wrapper.Handle(handler.Path(), handler)
 	}
 	return configServer
 }
