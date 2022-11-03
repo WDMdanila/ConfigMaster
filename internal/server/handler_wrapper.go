@@ -29,7 +29,7 @@ type HandlerWrapper struct {
 func (h *HandlerWrapper) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	log.Printf("got %v request to: %v\n", request.Method, request.RequestURI)
 	loggingWriter := NewLoggingResponseWriter(writer, request.RemoteAddr)
-	defer handleError(loggingWriter)()
+	defer handleError(loggingWriter)
 	if request.URL.Path != h.path {
 		http.NotFound(loggingWriter, request)
 		return
@@ -37,13 +37,11 @@ func (h *HandlerWrapper) ServeHTTP(writer http.ResponseWriter, request *http.Req
 	h.Handler.ServeHTTP(loggingWriter, request)
 }
 
-func handleError(writer http.ResponseWriter) func() {
-	return func() {
-		if err := recover(); err != nil {
-			writer.WriteHeader(http.StatusInternalServerError)
-			data := parseResponse("error", err)
-			_, _ = writer.Write(data)
-		}
+func handleError(writer http.ResponseWriter) {
+	if err := recover(); err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		data := parseResponse("error", err)
+		_, _ = writer.Write(data)
 	}
 }
 
