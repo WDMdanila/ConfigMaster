@@ -7,7 +7,6 @@ import (
 
 type Multiplexer interface {
 	Handle(string, http.Handler)
-	HandleFunc(string, func(http.ResponseWriter, *http.Request))
 	http.Handler
 }
 
@@ -26,12 +25,6 @@ type CountingMultiplexer struct {
 
 func (m *CountingMultiplexer) Handle(path string, handler http.Handler) {
 	m.Multiplexer.Handle(path, handler)
-	m.totalHandlers++
-	log.Printf("registered %v handler under: %v", m.totalHandlers, path)
-}
-
-func (m *CountingMultiplexer) HandleFunc(path string, handler func(http.ResponseWriter, *http.Request)) {
-	m.Multiplexer.HandleFunc(path, handler)
 	m.totalHandlers++
 	log.Printf("registered %v handler under: %v", m.totalHandlers, path)
 }

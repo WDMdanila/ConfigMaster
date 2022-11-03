@@ -6,17 +6,6 @@ import (
 	"testing"
 )
 
-func TestCountingMultiplexerHandleFunc(t *testing.T) {
-	multiplexer := CountingMultiplexer{
-		Multiplexer:   http.NewServeMux(),
-		totalHandlers: 0,
-	}
-	multiplexer.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {})
-	if multiplexer.totalHandlers == 0 {
-		t.Fatal()
-	}
-}
-
 func TestCountingMultiplexerHandle(t *testing.T) {
 	multiplexer := CountingMultiplexer{
 		Multiplexer:   http.NewServeMux(),
