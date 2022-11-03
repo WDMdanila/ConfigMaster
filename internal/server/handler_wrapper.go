@@ -48,10 +48,6 @@ func NewHandlerWrapper(path string, handler http.Handler) *HandlerWrapper {
 	return &HandlerWrapper{ReachableRequestHandler: ReachableRequestHandler{path: path, Handler: handler}}
 }
 
-func WrapHandler(handler RequestHandler) *HandlerWrapper {
-	return NewHandlerWrapper(handler.Path(), handler)
-}
-
 func NewLoggingResponseWriter(writer http.ResponseWriter, remoteAddr string) *LoggingResponseWriter {
 	return &LoggingResponseWriter{ResponseWriter: writer, RemoteAddr: remoteAddr}
 }
