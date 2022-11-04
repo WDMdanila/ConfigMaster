@@ -31,7 +31,12 @@ func nestedProcessPost(h *NestedRequestHandler, request *http.Request) []byte {
 	if err != nil {
 		return parseResponse("error", err.Error())
 	}
-	for key, val := range value {
+	h.addParameters(value)
+	return parseResponse("result", "OK")
+}
+
+func (h *NestedRequestHandler) addParameters(params map[string]interface{}) {
+	for key, val := range params {
 		switch v := val.(type) {
 		case map[string]interface{}:
 			parameter := parameters.FromJSON(key, v, false)
@@ -41,7 +46,6 @@ func nestedProcessPost(h *NestedRequestHandler, request *http.Request) []byte {
 			h.registerHandler(key, parameter)
 		}
 	}
-	return parseResponse("result", "OK")
 }
 
 func (h *NestedRequestHandler) registerHandler(key string, parameter parameters.Parameter) {
