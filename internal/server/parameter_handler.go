@@ -18,9 +18,10 @@ func (p *ParameterHandler) ServeHTTP(writer http.ResponseWriter, request *http.R
 }
 
 var parameterHandlerFunctions = map[string]HandlerFunction[ParameterHandler]{
-	"":             handleGET,
-	http.MethodGet: handleGET,
-	http.MethodPut: handlePUT,
+	"":              handleGET,
+	http.MethodGet:  handleGET,
+	http.MethodPut:  handlePUT,
+	http.MethodPost: handlePOST,
 }
 
 func (p *ParameterHandler) GetResponse(request *http.Request) []byte {
@@ -42,6 +43,20 @@ func handlePUT(processor *ParameterHandler, request *http.Request) []byte {
 	err = processor.Set(value["value"])
 	if err != nil {
 		return parseResponse("error", err.Error())
+	}
+	return parseResponse("result", "OK")
+}
+
+func handlePOST(processor *ParameterHandler, request *http.Request) []byte {
+	value, err := extractData(request)
+	if err != nil {
+		return parseResponse("error", err.Error())
+	}
+	switch parameter := processor.Parameter.(type) {
+	case parameters.Extender:
+		parameter.Extend(value["value"])
+	default:
+		return parseResponse("error", fmt.Sprintf("parameter %v is not a selection parameter", parameter.Name()))
 	}
 	return parseResponse("result", "OK")
 }

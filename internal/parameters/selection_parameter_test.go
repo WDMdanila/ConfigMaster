@@ -16,7 +16,21 @@ func TestSelectionParameterExtend(t *testing.T) {
 	}}
 	parameter.Extend(4)
 	if res := parameter.value[3]; res != expected {
-		t.Fatalf("parameter json %v does not equal to %v", res, expected)
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
+	}
+}
+
+func TestSelectionParameterExtendSlice(t *testing.T) {
+	expected := 1
+	values := make([]interface{}, 0)
+	values = append(values, 1, 2, 3)
+	parameter := SelectionParameter{SimpleParameter: SimpleParameter[[]interface{}]{
+		NamedParameter: NamedParameter{name: "value"},
+		value:          values,
+	}}
+	parameter.Extend([]interface{}{1, 2, 3, 4})
+	if res := parameter.value[3]; res != expected {
+		t.Fatalf("parameter value %v does not equal to %v", res, expected)
 	}
 }
 

@@ -5,6 +5,10 @@ import (
 	"sync"
 )
 
+type Extender interface {
+	Extend(interface{})
+}
+
 type SelectionParameter struct {
 	SimpleParameter[[]interface{}]
 	mutex sync.Mutex
@@ -13,7 +17,13 @@ type SelectionParameter struct {
 func (p *SelectionParameter) Extend(value interface{}) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
-	p.value = append(p.value, value)
+	switch val := value.(type) {
+	case []interface{}:
+		p.value = append(p.value, val...)
+	default:
+		p.value = append(p.value, value)
+
+	}
 }
 
 type RandomSelectionParameter struct {
