@@ -7,6 +7,13 @@ import (
 
 type SelectionParameter struct {
 	SimpleParameter[[]interface{}]
+	mutex sync.Mutex
+}
+
+func (p *SelectionParameter) Extend(value interface{}) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	p.value = append(p.value, value)
 }
 
 type RandomSelectionParameter struct {
@@ -16,7 +23,6 @@ type RandomSelectionParameter struct {
 type SequentialSelectionParameter struct {
 	SelectionParameter
 	index int
-	mutex sync.Mutex
 }
 
 func (p *RandomSelectionParameter) Value() interface{} {

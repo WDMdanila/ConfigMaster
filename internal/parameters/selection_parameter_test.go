@@ -6,6 +6,20 @@ import (
 	"testing"
 )
 
+func TestSelectionParameterExtend(t *testing.T) {
+	expected := 4
+	values := make([]interface{}, 0)
+	values = append(values, 1, 2, 3)
+	parameter := SelectionParameter{SimpleParameter: SimpleParameter[[]interface{}]{
+		NamedParameter: NamedParameter{name: "value"},
+		value:          values,
+	}}
+	parameter.Extend(4)
+	if res := parameter.value[3]; res != expected {
+		t.Fatalf("parameter json %v does not equal to %v", res, expected)
+	}
+}
+
 func TestRandomSelectionParameterValue(t *testing.T) {
 	expected := 1
 	var parameter Parameter

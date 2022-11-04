@@ -35,7 +35,7 @@ func (p *SimpleParameter[T]) Describe() map[string]interface{} {
 	return map[string]interface{}{p.name: p.value}
 }
 
-func NewSimpleParameter(name string, data interface{}) Parameter {
+func NewSimpleParameter(name string, data interface{}) *SimpleParameter[interface{}] {
 	return &SimpleParameter[interface{}]{NamedParameter: NamedParameter{name: name}, value: data}
 }
 
