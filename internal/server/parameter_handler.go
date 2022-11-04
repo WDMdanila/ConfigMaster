@@ -2,9 +2,7 @@ package server
 
 import (
 	"config_master/internal/parameters"
-	"config_master/internal/utils"
 	"fmt"
-	"io"
 	"net/http"
 )
 
@@ -19,42 +17,33 @@ func (p *ParameterHandler) ServeHTTP(writer http.ResponseWriter, request *http.R
 	_, _ = writer.Write(result)
 }
 
-var requestMethodHandlerFunc = map[string]func(*http.Request, *ParameterHandler) []byte{
+var parameterHandlerFunctions = map[string]HandlerFunction[ParameterHandler]{
 	"":             handleGET,
 	http.MethodGet: handleGET,
 	http.MethodPut: handlePUT,
 }
 
 func (p *ParameterHandler) GetResponse(request *http.Request) []byte {
-	if val, ok := requestMethodHandlerFunc[request.Method]; ok {
-		return val(request, p)
+	if val, ok := parameterHandlerFunctions[request.Method]; ok {
+		return val(p, request)
 	}
 	return parseResponse("error", fmt.Sprintf("method %v not supported", request.Method))
 }
 
-func handleGET(_ *http.Request, processor *ParameterHandler) []byte {
+func handleGET(processor *ParameterHandler, _ *http.Request) []byte {
 	return parseResponse("value", processor.Value())
 }
 
-func handlePUT(request *http.Request, processor *ParameterHandler) []byte {
-	data, err := io.ReadAll(request.Body)
+func handlePUT(processor *ParameterHandler, request *http.Request) []byte {
+	value, err := extractData(request)
 	if err != nil {
 		return parseResponse("error", err.Error())
 	}
-	value, err := utils.ExtractFromJSON[interface{}](data, "value")
-	if err != nil {
-		return parseResponse("error", err.Error())
-	}
-	err = processor.Set(value)
+	err = processor.Set(value["value"])
 	if err != nil {
 		return parseResponse("error", err.Error())
 	}
 	return parseResponse("result", "OK")
-}
-
-func parseResponse(name string, value interface{}) []byte {
-	res, _ := utils.GetAsJSON(name, value)
-	return res
 }
 
 func NewParameterHandler(path string, parameter parameters.Parameter) *ParameterHandler {

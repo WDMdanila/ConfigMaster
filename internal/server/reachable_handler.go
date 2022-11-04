@@ -1,6 +1,8 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type ReachableRequestHandler struct {
 	path string
@@ -10,3 +12,5 @@ type ReachableRequestHandler struct {
 func (h *ReachableRequestHandler) Path() string {
 	return h.path
 }
+
+type HandlerFunction[T any] func(*T, *http.Request) []byte
