@@ -56,5 +56,14 @@
       2,
       3
     ]
+  },
+  "thirteens_param": {
+    "parameter_type": "sequential selection",
+    "source": "files",
+    "values": [
+      "./configs/1.json",
+      "./configs/second/2.json",
+      "./configs/second/3.json"
+    ]
   }
 }

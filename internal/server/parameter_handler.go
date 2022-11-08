@@ -2,6 +2,7 @@ package server
 
 import (
 	"config_master/internal/parameters"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -32,7 +33,11 @@ func (p *ParameterHandler) GetResponse(request *http.Request) []byte {
 }
 
 func handleGET(processor *ParameterHandler, _ *http.Request) []byte {
-	return parseResponse("value", processor.Value())
+	res, err := json.Marshal(processor.Value())
+	if err != nil {
+		return parseResponse("error", err)
+	}
+	return res
 }
 
 func handlePUT(processor *ParameterHandler, request *http.Request) []byte {

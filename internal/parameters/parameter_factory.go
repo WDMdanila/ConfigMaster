@@ -1,7 +1,10 @@
 package parameters
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 )
 
 var parameterTypeMap = map[string]func(string, map[string]interface{}) Parameter{
@@ -26,6 +29,40 @@ func FromJSON(name string, json map[string]interface{}, strictType bool) Paramet
 }
 
 func newSequentialSelectionParameter(name string, data map[string]interface{}) Parameter {
+	if val, ok := data["source"]; ok {
+		switch source := val.(type) {
+		case string:
+			if source == "files" {
+				if val, ok := data["values"]; ok {
+					switch values := val.(type) {
+					case []interface{}:
+						var vals []interface{}
+						for _, file := range values {
+							data, err := os.ReadFile(file.(string))
+							log.Printf("---------------------------")
+							log.Printf("READING %v", file.(string))
+							log.Printf("---------------------------")
+							if err != nil {
+								panic(err)
+							}
+							var res interface{}
+							err = json.Unmarshal(data, &res)
+							if err != nil {
+								panic(err)
+							}
+							log.Printf("---------------------")
+							log.Printf("data: %v", res)
+							log.Printf("---------------------")
+							vals = append(vals, res)
+						}
+						return NewSequentialSelectionParameter(name, vals)
+					default:
+						panic("shiet")
+					}
+				}
+			}
+		}
+	}
 	if val, ok := data["values"]; ok {
 		switch values := val.(type) {
 		case []interface{}:

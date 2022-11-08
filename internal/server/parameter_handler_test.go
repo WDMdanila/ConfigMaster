@@ -10,7 +10,7 @@ import (
 )
 
 func TestParameterHandler(t *testing.T) {
-	expected := []byte(`{"value":1}`)
+	expected := []byte(`1`)
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	handler := NewParameterHandler("/", parameters.NewSimpleParameter("value", 1))
@@ -22,7 +22,7 @@ func TestParameterHandler(t *testing.T) {
 		t.Fatalf("expected error to be nil got %v", err)
 	}
 	if !bytes.Equal(data, expected) {
-		t.Fatalf(`expected {"value":1} got %v`, string(data))
+		t.Fatalf(`expected 1 got %v`, string(data))
 	}
 }
 

@@ -6,7 +6,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
+
+type Saver interface {
+	Save() []byte
+}
 
 type NestedRequestHandler struct {
 	ReachableRequestHandler
@@ -27,6 +32,33 @@ func nestedProcessGet(h *NestedRequestHandler, _ *http.Request) []byte {
 }
 
 func nestedProcessPost(h *NestedRequestHandler, request *http.Request) []byte {
+	if request.URL.Query().Has("save") {
+		return h.Save()
+	}
+	return h.handleParametersAddition(request)
+}
+
+func (h *NestedRequestHandler) Save() []byte {
+	tmp := map[string]interface{}{}
+	for _, handler := range h.handlers {
+		switch concrete := handler.(type) {
+		case Saver:
+			concrete.Save()
+		default:
+			for key, val := range concrete.Describe() {
+				tmp[key] = val
+			}
+		}
+	}
+	data, _ := json.Marshal(tmp)
+	err := os.WriteFile("./configs"+h.Path()+".json", data, 0644)
+	if err != nil {
+		return parseResponse("error", err.Error())
+	}
+	return parseResponse("result", "OK")
+}
+
+func (h *NestedRequestHandler) handleParametersAddition(request *http.Request) []byte {
 	value, err := extractData(request)
 	if err != nil {
 		return parseResponse("error", err.Error())
