@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"os"
 )
 
 var parameterTypeMap = map[string]func(string, map[string]interface{}) Parameter{
@@ -38,13 +37,10 @@ func newSequentialSelectionParameter(name string, data map[string]interface{}) P
 					case []interface{}:
 						var vals []interface{}
 						for _, file := range values {
-							data, err := os.ReadFile(file.(string))
-							if err != nil {
-								panic(err)
-							}
-							data = bytes.TrimPrefix(data, []byte("\xef\xbb\xbf"))
+							rawData := getCleanedRawData(file.(string))
+							rawData = bytes.TrimPrefix(rawData, []byte("\xef\xbb\xbf"))
 							var res interface{}
-							err = json.Unmarshal(data, &res)
+							err := json.Unmarshal(rawData, &res)
 							if err != nil {
 								panic(err)
 							}

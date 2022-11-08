@@ -3,8 +3,6 @@ package parameters
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"io"
 	"log"
 	"os"
 )
@@ -37,7 +35,7 @@ func NewJSONParameterReader(filePath string, strictTypes bool) ParameterReader {
 }
 
 func parseJSONFile(filePath string) map[string]interface{} {
-	rawData := readAllFromFile(filePath)
+	rawData := getCleanedRawData(filePath)
 	var data map[string]interface{}
 	err := json.Unmarshal(rawData, &data)
 	if err != nil {
@@ -46,30 +44,13 @@ func parseJSONFile(filePath string) map[string]interface{} {
 	return data
 }
 
-func readAllFromFile(filePath string) []byte {
-	jsonFile := openFile(filePath)
-	defer closeFile(jsonFile)
-	byteValue, err := io.ReadAll(jsonFile)
+func getCleanedRawData(filePath string) []byte {
+	byteValue, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Panic(err)
 	}
 	byteValue = bytes.TrimPrefix(byteValue, []byte("\xef\xbb\xbf"))
 	return byteValue
-}
-
-func openFile(filePath string) *os.File {
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Panic(err)
-	}
-	return file
-}
-
-func closeFile(file *os.File) {
-	err := file.Close()
-	if err != nil {
-		fmt.Printf("error during closing file: %v", err)
-	}
 }
 
 func parseParameter(name string, element interface{}, strictType bool) Parameter {
