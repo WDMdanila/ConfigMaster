@@ -1,9 +1,9 @@
 package parameters
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -39,20 +39,15 @@ func newSequentialSelectionParameter(name string, data map[string]interface{}) P
 						var vals []interface{}
 						for _, file := range values {
 							data, err := os.ReadFile(file.(string))
-							log.Printf("---------------------------")
-							log.Printf("READING %v", file.(string))
-							log.Printf("---------------------------")
 							if err != nil {
 								panic(err)
 							}
+							data = bytes.TrimPrefix(data, []byte("\xef\xbb\xbf"))
 							var res interface{}
 							err = json.Unmarshal(data, &res)
 							if err != nil {
 								panic(err)
 							}
-							log.Printf("---------------------")
-							log.Printf("data: %v", res)
-							log.Printf("---------------------")
 							vals = append(vals, res)
 						}
 						return NewSequentialSelectionParameter(name, vals)
