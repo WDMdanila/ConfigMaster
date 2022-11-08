@@ -1,6 +1,7 @@
 package parameters
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -52,6 +53,7 @@ func readAllFromFile(filePath string) []byte {
 	if err != nil {
 		log.Panic(err)
 	}
+	byteValue = bytes.TrimPrefix(byteValue, []byte("\xef\xbb\xbf"))
 	return byteValue
 }
 
